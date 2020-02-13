@@ -1,0 +1,37 @@
+{% extends 'tom_common/base.html' %}
+{% load static targets_extras observation_extras dataproduct_extras tom_common_extras %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+    <h1 class="text-center"><b>M</b>icrolensing <b>O</b>bserving <b>P</b>latform</h2>
+    <br/>    
+    <br/>    
+    <!-- BEGIN MODIFIED CONTENT -->
+
+    <p class="text-center"><img src="{% static 'img/MOP.jpeg' %}" class="img-fluid mx-auto"></p>
+    <p class="text-center">Catching microlensing events in the entire sky!</p>
+
+    <!-- END MODIFIED CONTENT -->
+  </div>
+  <div class="col-md-4">
+    <br/>    
+    <br/>
+    <br/>    
+    <br/>    
+    <br/>    
+    <div class="card">
+      <div class="card-header">
+        Latest Comments
+      </div>
+      {% recent_comments %}
+    </div>
+    <br/>
+    <div class="card">
+      <div class="card-header">
+        Latest Targets
+      </div>
+      {% recent_targets %}
+  </div>
+</div>
+{% endblock %}
