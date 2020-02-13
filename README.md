@@ -1,7 +1,7 @@
 # Microlensing Observation Portal
 
-A dummy implementation of the Microlensing Observation Portal, to get
-the LCO Microlensing Team going.
+TOM Toolkit for the LCO microlensing team. We harvest, fit, rank and observe all events in the sky!
+To join the team, please contact etibachelet@gmail.com and/or rstreet@lco.global.
 
 ## Build
 
