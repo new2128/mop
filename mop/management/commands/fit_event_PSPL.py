@@ -20,7 +20,7 @@ class Command(BaseCommand):
 
        target, created = Target.objects.get_or_create(name= options['target_name'])
 
-       
+
        datasets = ReducedDatum.objects.filter(target=target)
        time = [Time(i.timestamp).jd for i in datasets]
        phot = [[json.loads(i.value)['magnitude'],json.loads(i.value)['error'],json.loads(i.value)['filter']] for i in datasets]

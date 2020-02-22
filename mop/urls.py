@@ -15,6 +15,9 @@ Including another URLconf
 """
 from django.urls import path, include
 
+from mop.views import MOPTargetDetailView
+
 urlpatterns = [
+    path('targets/<pk>/', MOPTargetDetailView.as_view(), name='detail'),
     path('', include('tom_common.urls')),
 ]

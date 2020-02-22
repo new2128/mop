@@ -14,7 +14,7 @@ def fit_PSPL(photometry, emag_limit = None):
 
        current_event = event.Event()
        current_event.name = 'MOP_to_fit'
-       filters = np.unique(photometry[:,-1])
+       filters = np.unique(photometry[:,-1]) 
 
        for ind,filt in enumerate(filters):
 

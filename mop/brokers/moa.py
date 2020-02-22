@@ -80,7 +80,7 @@ class MOABroker(GenericBroker):
             year = target.name.split('-')[1]
             event = self.event_dictionnary[target.name][0]
 
-
+            import pdb; pdb.set_trace()
             url_file_path = os.path.join(BROKER_URL+'alert'+str(year)+'/fetchtxt.php?path=moa/ephot/phot-'+event+'.dat' )
             lines = urllib.request.urlopen(url_file_path).readlines()
 
@@ -123,8 +123,8 @@ class MOABroker(GenericBroker):
                     rd, created = ReducedDatum.objects.get_or_create(
                     timestamp=jd.to_datetime(timezone=TimezoneInfo()),
                     value=json.dumps(data),
-                    source_name=target.name,
-                    source_location='MOA Alerts',
+                    source_name='MOA',
+                    source_location=target.name,
                     data_type='photometry',
                     target=target)
                

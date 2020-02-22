@@ -126,8 +126,8 @@ class OGLEBroker(GenericBroker):
                 rd, created = ReducedDatum.objects.get_or_create(
                 timestamp=jd.to_datetime(timezone=TimezoneInfo()),
                 value=json.dumps(data),
-                source_name=target.name,
-                source_location='OGLE EWS',
+                source_name='OGLE',
+                source_location=target.name,
                 data_type='photometry',
                 target=target)
                
