@@ -80,7 +80,7 @@ class MOABroker(GenericBroker):
             year = target.name.split('-')[1]
             event = self.event_dictionnary[target.name][0]
 
-            import pdb; pdb.set_trace()
+
             url_file_path = os.path.join(BROKER_URL+'alert'+str(year)+'/fetchtxt.php?path=moa/ephot/phot-'+event+'.dat' )
             lines = urllib.request.urlopen(url_file_path).readlines()
 
@@ -107,8 +107,8 @@ class MOABroker(GenericBroker):
 
 
             photometry = np.c_[jd,mags,emags]
-           #photometry = photometry[photometry[:,0].argsort()[::-1],] #going backward to save time on ingestion
-            
+            photometry = photometry[photometry[:,0].argsort()[::-1],] #going backward to save time on ingestion
+
 
 
 
@@ -136,8 +136,9 @@ class MOABroker(GenericBroker):
                         # photometry already there (I hope!)
                         break
                 except:
-                    import pdb; pdb.set_trace()
+                        pass
 
+            print(target.name,'Ingest done!')
     def to_generic_alert(self, alert):
         pass
   

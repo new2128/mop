@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'tom_catalogs',
     'tom_observations',
     'tom_dataproducts',
+    'tom_publications',
     'mop',
 ]
 
@@ -239,6 +240,7 @@ TOM_ALERT_CLASSES = [
     'tom_alerts.brokers.scout.ScoutBroker',
     'tom_alerts.brokers.tns.TNSBroker',
     'tom_antares.antares.AntaresBroker',
+    'tom_alerts.brokers.gaia.GaiaBroker',
 ]
 
 BROKER_CREDENTIALS = { 
