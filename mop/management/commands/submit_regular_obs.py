@@ -8,7 +8,7 @@ class Command(BaseCommand):
     help = 'Submit Regular photomotry observations'
     
     def add_arguments(self, parser):
-        parser.add_argument('target_name', help='name of the event to fit')
+        parser.add_argument('target_name', help='name of the event to observe')
 
     
     def handle(self, *args, **options):
@@ -17,4 +17,4 @@ class Command(BaseCommand):
        time_now = Time(datetime.datetime.now())
        time_end = time_now+7
        
-       obs_control.submit_imaging_to_LCO(target,4)
+       obs_control.submit_imaging_to_LCO(target,4,['ip'],'SINISTRO')

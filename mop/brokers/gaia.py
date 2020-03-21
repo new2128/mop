@@ -16,7 +16,7 @@ def estimateGaiaError(mag) :
     if (mag>=13.5 and mag<17) : expectedStdAtBaselineMag = 10**log_err1
     if (mag>=17) : expectedStdAtBaselineMag = 10**log_err2
     #this works until 21 mag.
-    print( expectedStdAtBaselineMag)
+
     return expectedStdAtBaselineMag
 
 def update_gaia_errors(target):

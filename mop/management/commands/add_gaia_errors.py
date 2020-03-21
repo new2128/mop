@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from tom_targets.models import Target
-from mop.brokers import gaia
+from mop.brokers import gaia as gaia_mop
 
 
 
@@ -14,4 +14,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
        target, created = Target.objects.get_or_create(name= options['target_name'])
-       gaia.update_gaia_errors(target)
+       gaia_mop.update_gaia_errors(target)
