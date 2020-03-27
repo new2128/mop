@@ -4,6 +4,7 @@ from astropy.coordinates import SkyCoord
 import astropy.units as unit
 from tom_targets.models import Target
 from mop.brokers import gaia as gaia_mop
+
 class Command(BaseCommand):
 
     help = 'Downloads Gaia data for all events marked as microlensing candidate'

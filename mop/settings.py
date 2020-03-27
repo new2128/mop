@@ -221,7 +221,8 @@ DATA_PRODUCT_TYPES = {
     'photometry': ('photometry', 'Photometry'),
     'fits_file': ('fits_file', 'FITS File'),
     'spectroscopy': ('spectroscopy', 'Spectroscopy'),
-    'image_file': ('image_file', 'Image File')
+    'image_file': ('image_file', 'Image File'),
+    'TAP_priority': ('TAP_priority', 'TAP Priority')
 }
 
 DATA_PROCESSORS = {
@@ -271,7 +272,8 @@ EXTRA_FIELDS = [{'name':'Alive','type':'boolean', 'default':True},
                 {'name':'Source_magnitude','type':'number','default':0},
                 {'name':'Blend_magnitude','type':'number','default':0},
                 {'name':'Baseline_magnitude','type':'number','default':0},
-                {'name':'TAP_priority','type':'number','default':0},
+                {'name':'Fit_covariance','type':'string','default':''},
+                {'name':'TAP_priority','type':'number','default':''},
                 {'name':'Spectras','type':'number','default':0}]
                 
 # Authentication strategy can either be LOCKED (required login for all views)

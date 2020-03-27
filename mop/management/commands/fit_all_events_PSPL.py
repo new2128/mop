@@ -39,11 +39,11 @@ class Command(BaseCommand):
        
 
            datasets = ReducedDatum.objects.filter(target=target)
-           time = [Time(i.timestamp).jd for i in datasets]
-           phot = [[json.loads(i.value)['magnitude'],json.loads(i.value)['error'],json.loads(i.value)['filter']] for i in datasets]
+           time = [Time(i.timestamp).jd for i in datasets if i.data_type == 'photometry']
+           phot = [[json.loads(i.value)['magnitude'],json.loads(i.value)['error'],json.loads(i.value)['filter']] for i in datasets if i.data_type == 'photometry']
            photometry = np.c_[time,phot]
 
-           t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry)
+           t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry)
 
            time_now = Time(datetime.datetime.now()).jd
            how_many_tE = (time_now-t0_fit)/tE_fit
@@ -61,5 +61,6 @@ class Command(BaseCommand):
                  'piEN':np.around(piEN_fit,5),'piEE':np.around(piEE_fit,5),
                  'Source_magnitude':np.around(mag_source_fit,3),
                  'Blend_magnitude':np.around(mag_blend_fit,3),
-                 'Baseline_magnitude':np.around(mag_baseline_fit,3)}
+                 'Baseline_magnitude':np.around(mag_baseline_fit,3),
+                 'Fit_covariance':json.dumps(cov.tolist())}
            target.save(extras = extras)

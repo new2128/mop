@@ -3,6 +3,10 @@ from pyLIMA import event
 from pyLIMA import telescopes
 from pyLIMA import microlmodels
 
+def chi2(params,fit):
+
+     chi2 = np.sum(fit.residuals_LM(params)**2)
+     return chi2
 
 def flux_to_mag(flux):
       
@@ -104,7 +108,7 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None):
        
             #return [t0_fit,u0_fit,tE_fit,None,None,mag_source_fit,mag_blend_fit,mag_baseline_fit]
 
-       t0_fit =  current_event.fits[-1].fit_results[0]
+       t0_fit = current_event.fits[-1].fit_results[0] 
        u0_fit =  current_event.fits[-1].fit_results[1]
        tE_fit =  current_event.fits[-1].fit_results[2]
        piEN_fit =  current_event.fits[-1].fit_results[3]
@@ -119,4 +123,4 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None):
            mag_blend_fit = 0
            mag_baseline_fit = mag_source
        
-       return [t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit]
+       return [t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,current_event.fits[-1].fit_covariance]
