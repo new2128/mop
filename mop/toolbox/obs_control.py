@@ -106,8 +106,8 @@ def build_and_submit_regular_phot(target):
        obs_dic['ipp_value'] = ipp
        obs_dic['exposure_count'] = 1
        obs_dic['exposure_time'] = exposure_time_ip
-       obs_dic['period'] = cadence
-       obs_dic['jitter'] = jitter
+       obs_dic['period'] = cadence + exposure_time_gp/60./24*2 # Hack
+       obs_dic['jitter'] = jitter + exposure_time_gp/60./24*2  #Hack 
        obs_dic['max_airmass'] = max_airmass
        obs_dic['proposal'] = proposal
        obs_dic['filter'] = "ip"
@@ -124,14 +124,14 @@ def build_and_submit_regular_phot(target):
 
        for ind_req,req in enumerate(the_obs['requests']):
            for ind_fil,fil in enumerate(["ip","gp"]):
-        
+               
                if ind_fil>0:
                    new_instrument_config =  copy.deepcopy(instument_config)
                    new_instrument_config['optical_elements']['filter'] = fil
                    new_instrument_config['exposure_time'] = exposure_time_gp
                    
                    the_obs['requests'][ind_req]['configurations'][0]['instrument_configs'].append(new_instrument_config)
-       
+           
        telescope = lco.LCOFacility()    
        telescope.submit_observation(the_obs)
 
@@ -225,8 +225,8 @@ def build_and_submit_priority_phot(target):
        obs_dic['ipp_value'] = ipp
        obs_dic['exposure_count'] = 1
        obs_dic['exposure_time'] = exposure_time_ip
-       obs_dic['period'] = cadence
-       obs_dic['jitter'] = jitter
+       obs_dic['period'] = cadence + exposure_time_gp/60./24*2 # Hack
+       obs_dic['jitter'] = jitter + exposure_time_gp/60./24*2  #Hack 
        obs_dic['max_airmass'] = max_airmass
        obs_dic['proposal'] = proposal
        obs_dic['filter'] = "ip"
@@ -250,9 +250,12 @@ def build_and_submit_priority_phot(target):
                    new_instrument_config['optical_elements']['filter'] = fil
                    new_instrument_config['exposure_time'] = exposure_time_gp
                    
+
+
+
                    the_obs['requests'][ind_req]['configurations'][0]['instrument_configs'].append(new_instrument_config)
        
-       
+                 
        telescope = lco.LCOFacility()    
        telescope.submit_observation(the_obs)
 

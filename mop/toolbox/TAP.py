@@ -45,7 +45,7 @@ def calculate_exptime_omega_sdss_i(magin):
     snr = 1.0 / np.exp(lrms)
     # target 4% -> snr 25
 
-    return np.max((5,np.min((np.round((25. / snr)**2 * 300., 1),300)))) #no need to more 5 min exposure time, since we have different apertures, but more than 5 s at least
+    return float(np.max((5,np.min((np.round((25. / snr)**2 * 300., 1),500))))) #no need to more 5 min exposure time, since we have different apertures, but more than 5 s at least
 
 
 
