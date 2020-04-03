@@ -25,7 +25,22 @@ class Command(BaseCommand):
         list_of_events_alive = Target.objects.filter(targetextra__in=TargetExtra.objects.filter(key='Alive', value=True))  
 
         for event in list_of_events_alive[:]:
+
             try:
+
+                ### Regular obs
+
+                event_in_the_Bulge = event_in_the_Bulge(ra,dec)
+                
+                if event_in_the_Bulge:
+
+                   pass
+ 
+                else:
+ 
+                   obs_control.build_and_submit_regular_phot(target)
+
+
                 time_now = Time(datetime.datetime.now()).jd
                 t0_pspl = event.extra_fields['t0']
                 u0_pspl = event.extra_fields['u0']
