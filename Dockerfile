@@ -1,15 +1,17 @@
-FROM python:3.8-alpine
+FROM python:3.7
+LABEL maintainer="etibachelet@gmail.com"
 
-WORKDIR /app
+# the exposed port must match the deployment.yaml containerPort value
+EXPOSE 80
+ENTRYPOINT [ "/usr/local/bin/gunicorn", "mop.wsgi", "-b", "0.0.0.0:80", "--access-logfile", "-", "--error-logfile", "-", "-k", "gevent", "--timeout", "300", "--workers", "2"]
 
-# Install Python dependencies
-# Ask Ira for help when you need additional build-time dependencies (compilers,
-# Fortran libraries, and similar stuff) so he can help you keep the Docker
-# image fairly small.
-COPY requirements.txt .
-RUN apk --no-cache add --virtual .build-deps gcc musl-dev python3-dev libpq-dev\
-        && pip --no-cache-dir install -r requirements.txt \
-        && apk --no-cache del .build-deps
+WORKDIR /mop
 
-# Install application code
-COPY . .
+COPY requirements.txt /mop
+RUN pip install --no-cache-dir -r /mop/requirements.txt
+
+COPY . /mop
+
+RUN python manage.py collectstatic --noinput
+
+
