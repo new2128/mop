@@ -1,8 +1,9 @@
 from django.core.management.base import BaseCommand
 from tom_dataproducts.models import ReducedDatum
-from tom_targets.models import Target,TargetExtra
+from tom_targets.models import Target,TargetExtra,TargetList
 from astropy.time import Time
 from mop.toolbox import TAP
+from mop.toolbox import obs_control
 import datetime
 import json
 import numpy as np
@@ -17,10 +18,15 @@ class Command(BaseCommand):
     
     def handle(self, *args, **options):
 
+        ### Create or load TAP list
+        try:
 
-
-
-
+            tap_list = TargetList.objects.filter(name='TAP')[0]
+        
+        except:
+        
+            tap_list = TargetList(name='TAP')
+            tap_list.save()
         
         list_of_events_alive = Target.objects.filter(targetextra__in=TargetExtra.objects.filter(key='Alive', value=True))  
 
@@ -30,7 +36,7 @@ class Command(BaseCommand):
 
                 ### Regular obs
 
-                event_in_the_Bulge = event_in_the_Bulge(ra,dec)
+                event_in_the_Bulge = TAP.event_in_the_Bulge(event.ra, event.dec)
                 
                 if event_in_the_Bulge:
 
@@ -38,8 +44,7 @@ class Command(BaseCommand):
  
                 else:
  
-                   obs_control.build_and_submit_regular_phot(target)
-
+                   obs_control.build_and_submit_regular_phot(event)
 
                 time_now = Time(datetime.datetime.now()).jd
                 t0_pspl = event.extra_fields['t0']
@@ -75,7 +80,9 @@ class Command(BaseCommand):
                 new_observing_mode = TAP.TAP_observing_mode(planet_priority,planet_priority_error,  
                                                     event.extra_fields['Observing_mode'])
 
-
+                if new_observing_mode != 'No':
+                   tap_list.targets.add(event)
+                
                 extras = {'TAP_priority':np.around(planet_priority,5),'Observing_mode':new_observing_mode}
                 event.save(extras = extras)
                 print(planet_priority,planet_priority_error)

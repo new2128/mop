@@ -17,7 +17,7 @@ ZP = 27.4 #pyLIMA convention
 
 def TAP_observing_mode(priority,priority_error, previous_observing_mode):
 
-   if priority-2*priority_error>10:
+   if priority-priority_error>10:
 
        return 'Priority'
 
