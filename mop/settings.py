@@ -290,6 +290,8 @@ EXTRA_FIELDS = [{'name':'Alive','type':'boolean', 'default':True},
                 {'name':'Fit_covariance','type':'string','default':''},
                 {'name':'TAP_priority','type':'number','default':''},
                 {'name':'Spectras','type':'number','default':0}]
+
+TARGET_PERMISSIONS_ONLY=True
                 
 # Authentication strategy can either be LOCKED (required login for all views)
 # or READ_ONLY (read only access to views)
