@@ -38,7 +38,7 @@ class Command(BaseCommand):
 
                 event_in_the_Bulge = TAP.event_in_the_Bulge(event.ra, event.dec)
                 
-                if event_in_the_Bulge:
+                if (event_in_the_Bulge) & (event.extra_fields['Baseline_magnitude']>17):
 
                    pass
  
@@ -62,9 +62,9 @@ class Command(BaseCommand):
                 ### need to create a reducedatum for planet priority
             
             
-                data = {   'tap': planet_priority,
-                       'tap_error': planet_priority_error
-                   }
+                data = {'tap': planet_priority,
+                        'tap_error': planet_priority_error
+                        }
 
                 rd, created = ReducedDatum.objects.get_or_create(
                           timestamp=datetime.datetime.utcnow(),
@@ -82,10 +82,15 @@ class Command(BaseCommand):
 
                 if new_observing_mode != 'No':
                    tap_list.targets.add(event)
-                
+              
+
                 extras = {'TAP_priority':np.around(planet_priority,5),'Observing_mode':new_observing_mode}
                 event.save(extras = extras)
                 print(planet_priority,planet_priority_error)
-            
+               
+                if new_observing_mode == 'Priority':
+                   
+                   obs_control.build_and_submit_priority_phot(event)
+
             except:
                 print('Can not perform TAP for this target')

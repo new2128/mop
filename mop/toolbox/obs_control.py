@@ -6,6 +6,29 @@ import datetime
 from django.conf import settings
 import copy
 import numpy as np
+import requests
+import os
+
+
+def check_pending_observations(name,status):
+
+
+
+    token  = os.getenv('LCO_API_KEY')
+    headers = {'Authorization': 'Token ' + token}
+    url = os.path.join("https://observe.lco.global/api/userrequests/?order=&state="+status+"&name="+name+"&target=&proposal=&created_after=&created_before=&user=")
+    response = requests.get(url, headers=headers, timeout=20).json()
+
+    if response['count']==0:
+ 
+       need_to_submit = True
+
+    else:
+ 
+       need_to_submit = False
+
+
+    return need_to_submit
 
 def build_and_submit_regular_phot(target):
 
@@ -28,6 +51,13 @@ def build_and_submit_regular_phot(target):
 
       
        obs_name = target.name+'_'+'REG_phot'
+       #check if already submitted and pending
+       need_to_submit = check_pending_observations(obs_name,'PENDING')
+
+       if need_to_submit is False:
+
+          return
+
        cadence = 20/target.extra_fields['tE']  #points/days
       
        if cadence<0.5:
@@ -94,7 +124,8 @@ def build_and_submit_regular_phot(target):
        delta_time = cadence/2
 
        start = (datetime.datetime.utcnow()+datetime.timedelta(hours=delta_time)).isoformat()
-       end  = (datetime.datetime.utcnow()+datetime.timedelta(days=7)+datetime.timedelta(hours=delta_time)).isoformat()
+       end  = (datetime.datetime.utcnow()+datetime.timedelta(days=priority_duration)+datetime.timedelta(hours=delta_time)+datetime.timedelta(hours= (exposure_time_gp+300)/3600.*2)).isoformat()
+       
        
        obs_dic = {}
        obs_dic['name'] = obs_name
@@ -106,8 +137,8 @@ def build_and_submit_regular_phot(target):
        obs_dic['ipp_value'] = ipp
        obs_dic['exposure_count'] = 1
        obs_dic['exposure_time'] = exposure_time_ip
-       obs_dic['period'] = cadence + exposure_time_gp/60./24*2 # Hack
-       obs_dic['jitter'] = jitter + exposure_time_gp/60./24*2  #Hack 
+       obs_dic['period'] = cadence + exposure_time_gp/3600.*2 # Hack
+       obs_dic['jitter'] = jitter + exposure_time_gp/3600.*2  #Hack 
        obs_dic['max_airmass'] = max_airmass
        obs_dic['proposal'] = proposal
        obs_dic['filter'] = "ip"
@@ -157,7 +188,13 @@ def build_and_submit_priority_phot(target):
 
       
        obs_name = target.name+'_'+'PRI_phot'
-       
+       #check if already submitted and pending
+       need_to_submit = check_pending_observations(obs_name,'PENDING')
+
+       if need_to_submit is False:
+
+          return
+
        cadence = 1 #delta_hours/points 
        jitter = cadence
 
@@ -209,11 +246,11 @@ def build_and_submit_priority_phot(target):
        telescope = lco.LCOFacility()    
        telescope.submit_observation(the_obs)
        # gp,ip 
-
+       import pdb; pdb.set_trace()        
        delta_time = cadence/2
 
        start = (datetime.datetime.utcnow()+datetime.timedelta(hours=delta_time)).isoformat()
-       end  = (datetime.datetime.utcnow()+datetime.timedelta(days=priority_duration)+datetime.timedelta(hours=delta_time)).isoformat()
+       end  = (datetime.datetime.utcnow()+datetime.timedelta(days=priority_duration)+datetime.timedelta(hours=delta_time)+datetime.timedelta(hours= (exposure_time_gp+300)/3600.*2)).isoformat()
        
        obs_dic = {}
        obs_dic['name'] = obs_name
@@ -225,8 +262,8 @@ def build_and_submit_priority_phot(target):
        obs_dic['ipp_value'] = ipp
        obs_dic['exposure_count'] = 1
        obs_dic['exposure_time'] = exposure_time_ip
-       obs_dic['period'] = cadence + exposure_time_gp/60./24*2 # Hack
-       obs_dic['jitter'] = jitter + exposure_time_gp/60./24*2  #Hack 
+       obs_dic['period'] = cadence + (exposure_time_gp+300)/3600.*2 # Hack, 300s is for filter rotation (very conservative)
+       obs_dic['jitter'] = jitter + (exposure_time_gp+300)/3600.*2  #Hack 
        obs_dic['max_airmass'] = max_airmass
        obs_dic['proposal'] = proposal
        obs_dic['filter'] = "ip"
@@ -255,7 +292,7 @@ def build_and_submit_priority_phot(target):
 
                    the_obs['requests'][ind_req]['configurations'][0]['instrument_configs'].append(new_instrument_config)
        
-                 
+
        telescope = lco.LCOFacility()    
        telescope.submit_observation(the_obs)
 
