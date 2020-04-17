@@ -97,7 +97,7 @@ spec:
             - --timeout={{ .Values.gunicornTimeout | default 300 }}
             - --access-logfile=-
             - --error-logfile=-
-            - tom_demo.wsgi
+            - mop.wsgi
           env:
             {{ include "mop.extraEnv" . | nindent 12 }}
             {{ include "mop.backendEnv" . | nindent 12 }}
