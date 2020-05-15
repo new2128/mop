@@ -3,6 +3,8 @@ from tom_dataproducts.models import ReducedDatum
 from tom_targets.models import Target
 from astropy.time import Time
 from mop.toolbox import fittools
+from mop.brokers import gaia as gaia_mop
+
 
 import json
 import numpy as np
@@ -19,7 +21,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
        target, created = Target.objects.get_or_create(name= options['target_name'])
+       	
+       if 'Gaia' in target.name:
 
+           gaia_mop.update_gaia_errors(target)
 
        datasets = ReducedDatum.objects.filter(target=target)
 

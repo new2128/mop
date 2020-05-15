@@ -90,7 +90,9 @@ def mop_photometry(target):
              text="JD now",
              showarrow=False,
              textangle=-90,)
-    ]
+    ]		
+             xaxis_title="HJD-2450000",
+             yaxis_title="Mag",
     )
     return {
         'target': target,
