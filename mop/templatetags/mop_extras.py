@@ -87,7 +87,7 @@ def mop_photometry(target):
              xanchor="left",
              y=0.05,
              yref="paper",
-             text="JD now",
+             text="JD now : "+str(current_time)+" ("+str(Time.now().value).split(' ')[0]+")",
              showarrow=False,
              textangle=-90,)
     ]		
