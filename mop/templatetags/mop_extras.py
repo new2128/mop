@@ -80,20 +80,19 @@ def mop_photometry(target):
 
     ))
     fig.update_layout(
+        annotations = [
+            dict(
+                x=current_time,
+                xanchor="left",
+                y=0.05,
+                yref="paper",
+                text="JD now : "+str(current_time)+" ("+str(Time.now().value).split(' ')[0]+")",
+                showarrow=False,
+                textangle=-90,
+                xaxis_title="HJD-2450000",
+                yaxis_title="Mag",
+        )])
 
-    annotations=[
-        dict(
-             x=current_time,
-             xanchor="left",
-             y=0.05,
-             yref="paper",
-             text="JD now : "+str(current_time)+" ("+str(Time.now().value).split(' ')[0]+")",
-             showarrow=False,
-             textangle=-90,)
-    ]		
-             xaxis_title="HJD-2450000",
-             yaxis_title="Mag",
-    )
     return {
         'target': target,
         'plot': offline.plot(fig, output_type='div', show_link=False)
