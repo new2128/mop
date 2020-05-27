@@ -56,7 +56,7 @@ class Command(BaseCommand):
           alive = True
        
 
-       extras = {'Alive':alive, 't0':np.around(t0_fit,3),'u0':np.around(u0_fit,5),'tE':np.around(tE_fit,3),
+       extras = {'Alive':alive, 't0':np.around(t0_fit,3),'u0':np.around(np.max([10**-5,u0_fit]),5),'tE':np.around(tE_fit,3),
                  'piEN':np.around(piEN_fit,5),'piEE':np.around(piEE_fit,5),
                  'Source_magnitude':np.around(mag_source_fit,3),
                  'Blend_magnitude':np.around(mag_blend_fit,3),

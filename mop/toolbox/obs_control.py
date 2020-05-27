@@ -124,7 +124,7 @@ def build_and_submit_regular_phot(target):
        delta_time = cadence/2
 
        start = (datetime.datetime.utcnow()+datetime.timedelta(hours=delta_time)).isoformat()
-       end  = (datetime.datetime.utcnow()+datetime.timedelta(days=priority_duration)+datetime.timedelta(hours=delta_time)+datetime.timedelta(hours= (exposure_time_gp+300)/3600.*2)).isoformat()
+       end  = (datetime.datetime.utcnow()+datetime.timedelta(days=priority_duration)+datetime.timedelta(hours=delta_time)+datetime.timedelta(hours= 2*(exposure_time_gp+300)/3600.*2)).isoformat()
        
        
        obs_dic = {}
@@ -246,11 +246,11 @@ def build_and_submit_priority_phot(target):
        telescope = lco.LCOFacility()    
        telescope.submit_observation(the_obs)
        # gp,ip 
-       import pdb; pdb.set_trace()        
+
        delta_time = cadence/2
 
        start = (datetime.datetime.utcnow()+datetime.timedelta(hours=delta_time)).isoformat()
-       end  = (datetime.datetime.utcnow()+datetime.timedelta(days=priority_duration)+datetime.timedelta(hours=delta_time)+datetime.timedelta(hours= (exposure_time_gp+300)/3600.*2)).isoformat()
+       end  = (datetime.datetime.utcnow()+datetime.timedelta(days=priority_duration)+datetime.timedelta(hours=delta_time)+datetime.timedelta(hours= 2*(exposure_time_gp+300)/3600.*2)).isoformat()
        
        obs_dic = {}
        obs_dic['name'] = obs_name

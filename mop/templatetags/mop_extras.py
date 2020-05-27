@@ -12,6 +12,8 @@ from tom_dataproducts.models import DataProduct, ReducedDatum
 from tom_dataproducts.processors.data_serializers import SpectrumSerializer
 
 from astropy.time import Time
+import numpy as np
+
 register = template.Library()
 
 
@@ -87,10 +89,10 @@ def mop_photometry(target):
              xanchor="left",
              y=0.05,
              yref="paper",
-             text="JD now : "+str(current_time)+" ("+str(Time.now().value).split(' ')[0]+")",
+             text="JD now : "+str(np.round(current_time,3))+" ("+str(Time.now().value).split(' ')[0]+")",
              showarrow=False,
              textangle=-90,)
-    ]		
+    ],		
              xaxis_title="HJD-2450000",
              yaxis_title="Mag",
     )

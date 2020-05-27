@@ -40,11 +40,18 @@ class Command(BaseCommand):
                 
                 if (event_in_the_Bulge) & (event.extra_fields['Baseline_magnitude']>17):
 
-                   pass
+                       extras = {'Observing_mode':'No'}
+                       event.save(extras = extras)
  
                 else:
- 
-                   obs_control.build_and_submit_regular_phot(event)
+
+                   if event.extra_fields['Alive'] == True:
+                       extras = {'Observing_mode':'Regular'}
+                       event.save(extras = extras)
+                       obs_control.build_and_submit_regular_phot(event)
+                   else:
+                       extras = {'Observing_mode':'No'}
+                       event.save(extras = extras)
 
                 time_now = Time(datetime.datetime.now()).jd
                 t0_pspl = event.extra_fields['t0']
@@ -60,7 +67,7 @@ class Command(BaseCommand):
                 #psi_deriv = TAP.psi_derivatives_squared(time_now,t0_pspl,u0_pspl,tE_pspl) 
                 #error = (psi_deriv[2] * covariance[2,2] + psi_deriv[1] * covariance[1,1] + psi_deriv[0] * covariance[0,0])**0.5
                 ### need to create a reducedatum for planet priority
-            
+                
             
                 data = {'tap': planet_priority,
                         'tap_error': planet_priority_error
@@ -76,20 +83,20 @@ class Command(BaseCommand):
                
                 if created:
                     rd.save()
-            
-                new_observing_mode = TAP.TAP_observing_mode(planet_priority,planet_priority_error,  
-                                                    event.extra_fields['Observing_mode'])
 
-                if new_observing_mode != 'No':
+
+                extras = {'TAP_priority':np.around(planet_priority,5)}
+                event.save(extras = extras) 
+
+                new_observing_mode = TAP.TAP_observing_mode(planet_priority,planet_priority_error)
+
+                if new_observing_mode:
                    tap_list.targets.add(event)
               
 
-                extras = {'TAP_priority':np.around(planet_priority,5),'Observing_mode':new_observing_mode}
-                event.save(extras = extras)
-                print(planet_priority,planet_priority_error)
-               
-                if new_observing_mode == 'Priority':
-                   
+                   extras = {'Observing_mode':new_observing_mode}
+                   event.save(extras = extras)
+                   print(planet_priority,planet_priority_error)
                    obs_control.build_and_submit_priority_phot(event)
 
             except:

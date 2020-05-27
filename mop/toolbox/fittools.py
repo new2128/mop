@@ -42,7 +42,7 @@ def fit_PSPL(photometry, emag_limit = None):
        Model = microlmodels.create_model('PSPL', current_event, parallax=['None', 0])
        Model.parameters_boundaries[0] = [Model.parameters_boundaries[0][0],Model.parameters_boundaries[0][-1]+500]
        Model.parameters_boundaries[1] = [0,2]
-       current_event.fit(Model, 'DE',DE_population_size=10)
+       current_event.fit(Model, 'DE',DE_population_size=20)
 
        t0_fit =  current_event.fits[-1].fit_results[0]
        u0_fit =  current_event.fits[-1].fit_results[1]
@@ -102,7 +102,7 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None):
        #Model_parallax.parameters_boundaries[3] = [-1,1]
        #Model_parallax.parameters_boundaries[4] = [-1,1]
        Model_parallax.parameters_guess = [ t0_fit,u0_fit,tE_fit,0,0]
-       current_event.fit(Model_parallax, 'DE',DE_population_size=15,flux_estimation_MCMC = 'polyfit')
+       current_event.fit(Model_parallax, 'DE',DE_population_size=20,flux_estimation_MCMC = 'polyfit')
 
        #if (chi2_fit-current_event.fits[-1].fit_results[-1])/current_event.fits[-1].fit_results[-1]<0.1:
        

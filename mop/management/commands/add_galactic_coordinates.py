@@ -8,8 +8,8 @@ from astropy.coordinates import SkyCoord
 class Command(BaseCommand):
 
     help = 'Compute galactic coordinates l and b for all targets'
-    def add_arguments(self, parser):
-        parser.add_argument('target_name', help='name of the event to compute errors')
+   # def add_arguments(self, parser):
+   #     parser.add_argument('target_name', help='name of the event to compute errors')
 
     
     def handle(self, *args, **options):
@@ -17,10 +17,12 @@ class Command(BaseCommand):
        list_of_targets = Target.objects.filter()
     
        for target in list_of_targets:
+           try:
 
-           cible = SkyCoord(ra=target.ra*u.degree, dec=target.dec*u.degree, frame='icrs')
-             
-           galactic = {'galactic_lng' : cible.galactic.l.value, 'galactic_lat':cible.galactic.b.value}
-
-           target.save(extras=galactic)
-
+               cible = SkyCoord(ra=target.ra*u.degree, dec=target.dec*u.degree, frame='icrs')
+               target.galactic_lng = cible.galactic.l.value
+               target.galactic_lat = cible.galactic.b.value
+              
+               target.save()
+           except:
+               pass

@@ -15,7 +15,7 @@ from pyLIMA import microlmodels
 ZP = 27.4 #pyLIMA convention
 
 
-def TAP_observing_mode(priority,priority_error, previous_observing_mode):
+def TAP_observing_mode(priority,priority_error):
 
    if priority-priority_error>10:
 
@@ -23,7 +23,7 @@ def TAP_observing_mode(priority,priority_error, previous_observing_mode):
 
    else:
 
-       return previous_observing_mode
+       return None
 
 
 

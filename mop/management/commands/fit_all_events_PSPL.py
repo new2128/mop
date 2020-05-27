@@ -3,7 +3,7 @@ from tom_dataproducts.models import ReducedDatum
 from tom_targets.models import Target,TargetExtra
 from astropy.time import Time
 from mop.toolbox import fittools
-
+from mop.brokers import gaia as gaia_mop
 import json
 import numpy as np
 import datetime
@@ -36,7 +36,9 @@ class Command(BaseCommand):
 
        for target in list_of_targets:
 
-       
+           if 'Gaia' in target.name:
+
+               gaia_mop.update_gaia_errors(target)
 
            datasets = ReducedDatum.objects.filter(target=target)
            time = [Time(i.timestamp).jd for i in datasets if i.data_type == 'photometry']
