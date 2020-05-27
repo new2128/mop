@@ -96,6 +96,7 @@ def mop_photometry(target):
              xaxis_title="HJD-2450000",
              yaxis_title="Mag",
     )
+
     return {
         'target': target,
         'plot': offline.plot(fig, output_type='div', show_link=False)
