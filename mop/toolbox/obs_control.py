@@ -112,7 +112,7 @@ def build_and_submit_regular_phot(target):
        obs_dic['instrument_type'] = instrument_type
        obs_dic['facility'] = facility
        obs_dic['observation_type'] = observing_type 
-       
+
        request_obs =  lco.LCOBaseObservationForm(obs_dic)
        request_obs.is_valid()
        the_obs = request_obs.observation_payload()

@@ -100,4 +100,5 @@ class Command(BaseCommand):
                    obs_control.build_and_submit_priority_phot(event)
 
             except:
+
                 print('Can not perform TAP for this target')

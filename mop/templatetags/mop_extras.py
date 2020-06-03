@@ -81,6 +81,20 @@ def mop_photometry(target):
                  )
 
     ))
+
+    ### Try to plot model if exist
+    try:
+       for datum in ReducedDatum.objects.filter(target=target, data_type=settings.DATA_PRODUCT_TYPES['lc_model'][0]).order_by('-id')[:1]:
+
+            values = json.loads(datum.value)
+            time = np.array(values['lc_model_time'])-2450000
+            mag = np.array(values['lc_model_magnitude'])
+            fig.add_trace(go.Scatter(x=time, y=mag,
+                    mode='lines',
+                    name='Model'))
+    except:
+
+       pass
     fig.update_layout(
 
     annotations=[
