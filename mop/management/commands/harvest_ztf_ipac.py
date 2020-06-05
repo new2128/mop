@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from mop.brokers import ztf_ipac
+from mop.brokers import ztfipac
 
 
 class Command(BaseCommand):
@@ -10,9 +10,9 @@ class Command(BaseCommand):
         #parser.add_argument('years', help='years you want to harvest, spearted by ,')
         pass
     def handle(self, *args, **options):
-        
-        ZTF_IPAC = ztf_ipac.ZTFIPACBroker()
-        ZTF_IPAC.fetch_alerts()
+
+        ZTFIPAC = ztfipac.ZTFIPACBroker()
+        ZTFIPAC.fetch_alerts()
 
 
    

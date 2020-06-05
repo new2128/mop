@@ -91,7 +91,12 @@ def mop_photometry(target):
             mag = np.array(values['lc_model_magnitude'])
             fig.add_trace(go.Scatter(x=time, y=mag,
                     mode='lines',
-                    name='Model'))
+                    name='Model',
+                    opacity=0.5,
+                    line = dict(color='rgb(128,128,128)',
+                                width=5,
+                                ),
+                     ))
     except:
 
        pass
