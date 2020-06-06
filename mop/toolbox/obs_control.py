@@ -170,7 +170,7 @@ def build_and_submit_phot(target, obs_type):
                    
                    the_obs['requests'][ind_req]['configurations'][0]['instrument_configs'].append(new_instrument_config)
                else:
-                   instument_config['exposure_time'] = exposure_time_ip
+                   the_obs['requests'][ind_req]['configurations'][0]['instrument_configs'][0]['exposure_time'] = exposure_time_ip
 
        telescope = lco.LCOFacility()    
        telescope.submit_observation(the_obs)

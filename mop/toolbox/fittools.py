@@ -64,6 +64,20 @@ def fit_PSPL(photometry, emag_limit = None):
 
 def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None):
  
+       # Filter orders
+       filters_order = ['I','ip','i_ZTF','r_ZTF','g_ZTF','gp','G']
+      
+
+       filters = np.unique(photometry[:,-1])
+       order = []
+       for fil in filters_order:
+
+           mask = np.where(filters==fil)[0]
+           if len(mask)!= 0:
+                order += mask.tolist() 
+       filters = filters[order]
+
+
 
        t0_fit,u0_fit,tE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,chi2_fit = fit_PSPL(photometry, emag_limit = None)
 
@@ -71,9 +85,7 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None):
        current_event.name = 'MOP_to_fit'
 
        current_event.ra = ra
-       current_event.dec = dec
-
-       filters = np.unique(photometry[:,-1])
+       current_event.dec = dec 
 
        for ind,filt in enumerate(filters):
 

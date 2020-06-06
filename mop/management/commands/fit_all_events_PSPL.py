@@ -42,10 +42,36 @@ class Command(BaseCommand):
 
            datasets = ReducedDatum.objects.filter(target=target)
            time = [Time(i.timestamp).jd for i in datasets if i.data_type == 'photometry']
-           phot = [[json.loads(i.value)['magnitude'],json.loads(i.value)['error'],json.loads(i.value)['filter']] for i in datasets if i.data_type == 'photometry']
+            
+           phot = []
+           for data in datasets:
+               if data.data_type == 'photometry':
+                  try:
+                       phot.append([json.loads(data.value)['magnitude'],json.loads(data.value)['error'],json.loads(data.value)['filter']])
+           
+                  except:
+                       # Weights == 1
+                       phot.append([json.loads(data.value)['magnitude'],1,json.loads(data.value)['filter']])
+               
+
            photometry = np.c_[time,phot]
 
-           t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry)
+           t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov,model = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry)
+           #Add photometry model
+           data = {'lc_model_time': model.lightcurve_magnitude[:,0].tolist(),
+               'lc_model_magnitude': model.lightcurve_magnitude[:,1].tolist()
+                        }
+
+           rd, created = ReducedDatum.objects.get_or_create(
+                  timestamp=datetime.datetime.utcnow(),
+                  value=json.dumps(data),
+                  source_name='MOP',
+                  source_location=target.name,
+                  data_type='lc_model',
+                  target=target)
+       
+           if created:
+              rd.save()
 
            time_now = Time(datetime.datetime.now()).jd
            how_many_tE = (time_now-t0_fit)/tE_fit

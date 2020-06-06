@@ -29,7 +29,17 @@ class Command(BaseCommand):
        datasets = ReducedDatum.objects.filter(target=target)
 
        time = [Time(i.timestamp).jd for i in datasets if i.data_type == 'photometry']
-       phot = [[json.loads(i.value)['magnitude'],json.loads(i.value)['error'],json.loads(i.value)['filter']] for i in datasets if i.data_type == 'photometry']
+       phot = []
+       for data in datasets:
+           if data.data_type == 'photometry':
+                try:
+                     phot.append([json.loads(data.value)['magnitude'],json.loads(data.value)['error'],json.loads(data.value)['filter']])
+           
+                except:
+                     # Weights == 1
+                     phot.append([json.loads(data.value)['magnitude'],1,json.loads(data.value)['filter']])
+               
+              
 
        photometry = np.c_[time,phot]
        
