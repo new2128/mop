@@ -26,7 +26,17 @@ def TAP_observing_mode(priority,priority_error):
        return None
 
 
+def calculate_exptime_floyds(magin):
+    """
+    This function calculates the required exposure time
+    for a given iband magnitude for the floyds spectra
+    """
+    exposure_time = 3600 #s
 
+    if magin<11:
+       exposure_time = 1800 #s 
+
+    return exposure_time 
 
 
 def calculate_exptime_omega_sdss_i(magin):

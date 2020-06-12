@@ -73,6 +73,13 @@ class Command(BaseCommand):
                     rd.save()
                 extras = {'TAP_priority':np.around(planet_priority,5)}
                 event.save(extras = extras) 
+
+                ### Spectroscopy
+                if event.extra_fields['Spectras']<1:
+                    obs_control.build_and_submit_regular_spectro(event) 
+                
+
+
                 ### Regular obs
 
                 event_in_the_Bulge = TAP.event_in_the_Bulge(event.ra, event.dec)

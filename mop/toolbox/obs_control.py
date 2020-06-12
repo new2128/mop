@@ -8,6 +8,8 @@ import copy
 import numpy as np
 import requests
 import os
+import json
+
 
 
 def check_pending_observations(name,status):
@@ -30,13 +32,135 @@ def check_pending_observations(name,status):
 
     return need_to_submit
 
+def build_arc_calibration_template(science_obs):
+
+    config_arc = copy.deepcopy(science_obs['requests'][0]['configurations'][0])
+    config_arc['type'] = "ARC"
+    config_arc['instrument_configs'][0]['exposure_time'] = 50.0
+    config_arc['acquisition_config']['mode'] = "OFF"
+    config_arc['acquisition_config']['extra_params'] = {}
+    config_arc['guiding_config']['optional'] = True
+
+    return config_arc
+
+def build_lamp_calibration_template(science_obs):
+
+    config_lamp = copy.deepcopy(science_obs['requests'][0]['configurations'][0])
+    config_lamp['type'] = "LAMP_FLAT"
+    config_lamp['instrument_configs'][0]['exposure_time'] = 60.0
+    config_lamp['acquisition_config']['mode'] = "OFF"
+    config_lamp['acquisition_config']['extra_params'] = {}
+    config_lamp['guiding_config']['optional'] = True
+
+    return config_lamp
+    
+
+
+def build_and_submit_spectro(target, obs_type):
+
+       #Defaults
+       observing_type  = 'SPECTRA'
+       instrument_type = '2M0-FLOYDS-SCICAM'
+       proposal =  os.getenv('LCO_PROPOSAL_ID')
+       facility = 'LCO'
+       observation_mode = 'NORMAL'
+       max_airmass = 2
+       if obs_type == 'priority':
+          
+          ipp = 1.1  
+          obs_name = target.name+'_'+'PRI_spectro'
+          obs_duration = 3 #days
+
+       
+       else:
+
+          ipp = 1.0  
+          obs_name = target.name+'_'+'REG_spectro'
+          obs_duration = 7 #days
+
+
+       need_to_submit = check_pending_observations(obs_name,'PENDING')
+
+       if need_to_submit is False:
+
+          return
+
+       start = datetime.datetime.utcnow().isoformat()
+       end  = (datetime.datetime.utcnow()+datetime.timedelta(days=obs_duration)).isoformat()
+
+       mag_now = TAP.TAP_mag_now(target)
+       mag_exposure = mag_now
+
+       if mag_now>15:
+          # too faint for FLOYDS
+          return
+       exposure_time_ip = TAP.calculate_exptime_floyds(mag_exposure)
+
+
+       
+
+       obs_dic = {}
+
+        
+       obs_dic['name'] = obs_name
+       obs_dic['target_id'] = target.id
+       obs_dic['start'] = start
+       obs_dic['end'] = end
+       obs_dic['observation_mode'] = observation_mode
+       # Bizzare
+       obs_dic['filter'] =  "slit_1.6as"
+
+       obs_dic['ipp_value'] = ipp
+       obs_dic['exposure_count'] = 1
+       obs_dic['exposure_time'] = exposure_time_ip
+       obs_dic['max_airmass'] = max_airmass
+       obs_dic['proposal'] = proposal
+
+       obs_dic['instrument_type'] = instrument_type
+       obs_dic['facility'] = facility
+       obs_dic['observation_type'] = observing_type 
+       obs_dic['rotator_mode'] ='SKY'
+       obs_dic['rotator_angle'] =0
+       #obs_dic['extra_params'] = "None"
+
+       request_obs =  lco.LCOSpectroscopyObservationForm(obs_dic)
+       request_obs.is_valid()
+       the_obs = request_obs.observation_payload()
+
+
+       #Hacking
+       the_obs['requests'][0]['configurations'][0]['instrument_configs'][0]['extra_params'] = {}
+       data =  '''{"mode": "BRIGHTEST", "exposure_time": null,
+                    "extra_params": {
+                    "acquire_radius": "5"}}'''
+       the_obs['requests'][0]['configurations'][0]['acquisition_config']=json.loads(data)
+ 
+       data =  '''{"optional": false,
+                "mode": "ON",
+                "optical_elements": {},
+                "exposure_time": null,
+                "extra_params": {}}'''
+       the_obs['requests'][0]['configurations'][0]['guiding_config']=json.loads(data)
+
+       config_lamp = build_lamp_calibration_template(the_obs)
+       config_arc = build_arc_calibration_template(the_obs)
+
+       the_obs['requests'][0]['configurations'].insert(0,config_arc)
+       the_obs['requests'][0]['configurations'].insert(0,config_lamp)
+       the_obs['requests'][0]['configurations'].append(config_arc)
+       the_obs['requests'][0]['configurations'].append(config_lamp)
+
+       telescope = lco.LCOFacility()    
+       telescope.submit_observation(the_obs)
+
+
 def build_and_submit_phot(target, obs_type):
 
-	
+    
        #Defaults
        observing_type  = 'IMAGING'
        instrument_type = '1M0-SCICAM-SINISTRO'
-       proposal =  'LCO2020A-002'
+       proposal =  os.getenv('LCO_PROPOSAL_ID')
        facility = 'LCO'
        observation_mode = 'NORMAL'
        max_airmass = 2
@@ -152,6 +276,7 @@ def build_and_submit_phot(target, obs_type):
        obs_dic['instrument_type'] = instrument_type
        obs_dic['facility'] = facility
        obs_dic['observation_type'] = observing_type 
+
        request_obs =  lco.LCOBaseObservationForm(obs_dic)
        request_obs.is_valid()
        the_obs = request_obs.observation_payload()
@@ -184,3 +309,6 @@ def build_and_submit_priority_phot(target):
 
     build_and_submit_phot(target, 'priority')
 
+def build_and_submit_regular_spectro(target):
+
+    build_and_submit_spectro(target, 'regular')
