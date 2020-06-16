@@ -39,6 +39,9 @@ class Command(BaseCommand):
 
         for event in list_of_events_alive[:]:
 
+            if 'Microlensing' not in event.extra_fields['Classification']:
+               return
+
             try:
 
                 time_now = Time(datetime.datetime.now()).jd
@@ -74,10 +77,7 @@ class Command(BaseCommand):
                 extras = {'TAP_priority':np.around(planet_priority,5)}
                 event.save(extras = extras) 
 
-                ### Spectroscopy
-                if event.extra_fields['Spectras']<1:
-                    obs_control.build_and_submit_regular_spectro(event) 
-                
+              
 
 
                 ### Regular obs
@@ -88,6 +88,7 @@ class Command(BaseCommand):
 
                        extras = {'Observing_mode':'No'}
                        event.save(extras = extras)
+                       return
  
                 else:
 
@@ -111,6 +112,10 @@ class Command(BaseCommand):
                    print(planet_priority,planet_priority_error)
                    obs_control.build_and_submit_priority_phot(event)
 
+                ### Spectroscopy
+                if event.extra_fields['Spectras']<1:
+                    obs_control.build_and_submit_regular_spectro(event) 
+                
             except:
 
                 print('Can not perform TAP for this target')

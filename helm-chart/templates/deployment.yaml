@@ -101,6 +101,11 @@ spec:
           env:
             {{ include "mop.extraEnv" . | nindent 12 }}
             {{ include "mop.backendEnv" . | nindent 12 }}
+            - name: "ANTARES_KEY"
+              valueFrom:
+                  name: mop
+                  key: ANTARES_KEY
+
           ports:
             - name: http
               containerPort: 8080

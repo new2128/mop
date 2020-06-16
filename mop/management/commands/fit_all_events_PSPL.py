@@ -39,6 +39,9 @@ class Command(BaseCommand):
            if 'Gaia' in target.name:
 
                gaia_mop.update_gaia_errors(target)
+           
+           if 'Microlensing' not in target.extra_fields['Classification']:
+               return
 
            datasets = ReducedDatum.objects.filter(target=target)
            time = [Time(i.timestamp).jd for i in datasets if i.data_type == 'photometry']
