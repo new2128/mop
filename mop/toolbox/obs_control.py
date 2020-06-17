@@ -1,6 +1,8 @@
 from tom_observations.facility import GenericObservationFacility, GenericObservationForm, get_service_class
 from tom_observations.facilities import lco
 from tom_observations.cadence import CadenceForm
+from tom_observations.models import ObservationRecord
+
 from mop.toolbox import TAP
 import datetime 
 from django.conf import settings
@@ -79,7 +81,6 @@ def build_and_submit_spectro(target, obs_type):
           obs_name = target.name+'_'+'REG_spectro'
           obs_duration = 7 #days
 
-
        need_to_submit = check_pending_observations(obs_name,'PENDING')
 
        if need_to_submit is False:
@@ -152,8 +153,17 @@ def build_and_submit_spectro(target, obs_type):
        the_obs['requests'][0]['configurations'].append(config_lamp)
 
        telescope = lco.LCOFacility()    
-       telescope.submit_observation(the_obs)
+       observation_ids = telescope.submit_observation(the_obs)
 
+       
+       for observation_id in observation_ids:
+            
+           record = ObservationRecord.objects.create(
+                                      target=target,
+                                      facility='LCO',
+                                      parameters=request_obs.serialize_parameters(),
+                                      observation_id=observation_id
+                                      )
 
 def build_and_submit_phot(target, obs_type):
     
@@ -249,7 +259,16 @@ def build_and_submit_phot(target, obs_type):
        the_obs = request_obs.observation_payload()
 
        telescope = lco.LCOFacility()    
-       telescope.submit_observation(the_obs)
+       observation_ids = telescope.submit_observation(the_obs)
+
+       for observation_id in observation_ids:
+            
+           record = ObservationRecord.objects.create(
+                                      target=target,
+                                      facility='LCO',
+                                      parameters=request_obs.serialize_parameters(),
+                                      observation_id=observation_id
+                                      )
        # gp,ip 
 
        delta_time = cadence/2
@@ -298,7 +317,17 @@ def build_and_submit_phot(target, obs_type):
                    the_obs['requests'][ind_req]['configurations'][0]['instrument_configs'][0]['exposure_time'] = exposure_time_ip
 
        telescope = lco.LCOFacility()    
-       telescope.submit_observation(the_obs)
+       observation_ids = telescope.submit_observation(the_obs)
+       
+       for observation_id in observation_ids:
+            
+           record = ObservationRecord.objects.create(
+                                      target=target,
+                                      facility='LCO',
+                                      parameters=request_obs.serialize_parameters(),
+                                      observation_id=observation_id
+                                      )
+
 
 def build_and_submit_regular_phot(target):
 
