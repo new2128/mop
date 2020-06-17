@@ -126,6 +126,12 @@ spec:
                   secretKeyRef:
                        name: mop
                        key: LCO_PROPOSAL_ID
+
+            - name: "LCO_USERNAME"
+              valueFrom:
+                  secretKeyRef:
+                       name: mop
+                       key: LCO_USERNAME
           ports:
             - name: http
               containerPort: 8080

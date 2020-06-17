@@ -15,10 +15,11 @@ import json
 def check_pending_observations(name,status):
 
 
-
     token  = os.getenv('LCO_API_KEY')
+    username =  os.getenv('LCO_USERNAME')
     headers = {'Authorization': 'Token ' + token}
-    url = os.path.join("https://observe.lco.global/api/userrequests/?order=&state="+status+"&name="+name+"&target=&proposal=&created_after=&created_before=&user=")
+    url = os.path.join("https://observe.lco.global/api/requestgroups/?state=PENDING&user="+username+"&name="+name)
+
     response = requests.get(url, headers=headers, timeout=20).json()
 
     if response['count']==0:
@@ -155,7 +156,6 @@ def build_and_submit_spectro(target, obs_type):
 
 
 def build_and_submit_phot(target, obs_type):
-
     
        #Defaults
        observing_type  = 'IMAGING'
