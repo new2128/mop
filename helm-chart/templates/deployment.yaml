@@ -103,8 +103,9 @@ spec:
             {{ include "mop.backendEnv" . | nindent 12 }}
             - name: "ANTARES_KEY"
               valueFrom:
-                  name: mop
-                  key: ANTARES_KEY
+                  secretKeyRef:
+                       name: mop
+                       key: ANTARES_KEY
 
           ports:
             - name: http
