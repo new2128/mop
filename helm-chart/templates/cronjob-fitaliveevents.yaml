@@ -1,0 +1,27 @@
+{{- if .Values.createimages.enabled -}}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "mop.fullname" . }}-fitaliveevents
+  labels:
+    app.kubernetes.io/name: {{ include "mop.name" . }}
+    helm.sh/chart: {{ include "mop.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/component: "fitaliveevents"
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: "Forbid"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: MOPFitAliveEvents
+              image: busybox
+              command: ["date"]
+
+          restartPolicy: Never
+
+
+
