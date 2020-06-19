@@ -27,6 +27,37 @@ spec:
               env:
                 {{ include "mop.extraEnv" . | nindent 12 }}
                 {{ include "mop.backendEnv" . | nindent 12 }}
+                - name: "ANTARES_KEY"
+                  valueFrom:
+                  secretKeyRef:
+                       name: mop
+                       key: ANTARES_KEY
+                - name: "ANTARES_PWD"
+                  valueFrom:
+                  secretKeyRef:
+                       name: mop
+                       key: ANTARES_PWD
+                - name: "SECRET_KEY"
+                  valueFrom:
+                  secretKeyRef:
+                       name: mop
+                       key: SECRET_KEY
+                - name: "LCO_API_KEY"
+                  valueFrom:
+                  secretKeyRef:
+                       name: mop
+                       key: LCO_API_KEY
+                - name: "LCO_PROPOSAL_ID"
+                  valueFrom:
+                  secretKeyRef:
+                       name: mop
+                       key: LCO_PROPOSAL_ID
+
+                - name: "LCO_USERNAME"
+                  valueFrom:
+                  secretKeyRef:
+                       name: mop
+                       key: LCO_USERNAME
           restartPolicy: Never
 
 
