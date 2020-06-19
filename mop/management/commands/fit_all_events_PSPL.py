@@ -25,6 +25,8 @@ class Command(BaseCommand):
            list_of_targets = Target.objects.filter()
        if all_events == 'alive':
            list_of_targets = Target.objects.filter(targetextra__in=TargetExtra.objects.filter(key='Alive', value=True))
+       if all_events == 'need':
+           list_of_targets = Target.objects.filter(targetextra__in=TargetExtra.objects.filter(key='t0', value=0.0))
        if all_events[0] == '[':     
 	    
             years = all_events[1:-1].split(',')
@@ -41,6 +43,10 @@ class Command(BaseCommand):
                gaia_mop.update_gaia_errors(target)
            
            if 'Microlensing' not in target.extra_fields['Classification']:
+               alive = False
+
+               extras = {'Alive':alive}
+               target.save(extras = extras)
                return
 
            datasets = ReducedDatum.objects.filter(target=target)

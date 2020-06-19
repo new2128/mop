@@ -29,3 +29,14 @@ fitaliveevents:
     limits:
       cpu: 1000m
       memory: 1024Mi
+
+# CronJob: Fit Need Events
+fitneedevents:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi

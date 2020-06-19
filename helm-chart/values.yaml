@@ -13,6 +13,13 @@ fitaliveevents:
   schedule: "* */4 * * *"
   resources: {}
 
+
+# CronJob: Fit Need Events
+fitneedevents:
+  enabled: true
+  schedule: "* */12 * * *"
+  resources: {}
+
 replicaCount: 1
 
 image:
