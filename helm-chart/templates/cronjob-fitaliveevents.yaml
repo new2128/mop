@@ -21,7 +21,7 @@ spec:
               securityContext:
                  {{- toYaml .Values.securityContext | nindent 12 }}
               image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
-              imagePullPolicy: {{ .Values.image.pullPolicy }}image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
               command: 
                 - python
                 - manage.py
