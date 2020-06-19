@@ -16,10 +16,7 @@ spec:
       template:
         spec:
           containers:
-            - name: mopfitaliveevents
-              
-              securityContext:
-                 {{- toYaml .Values.securityContext | nindent 12 }}
+            - name: mopfitaliveevents        
               image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
               imagePullPolicy: {{ .Values.image.pullPolicy }}
               command: 
