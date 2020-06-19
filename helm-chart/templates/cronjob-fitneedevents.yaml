@@ -11,7 +11,7 @@ spec:
   failedJobsHistoryLimit: {{ default 1 .Values.fitneedevents.failedJobsHistoryLimit }}
   successfulJobsHistoryLimit: {{ default 3 .Values.fitneedevents.successfulJobsHistoryLimit }}
   startingDeadlineSeconds: 120
-  schedule: "{{ .Values.fitneedvents.schedule }}"
+  schedule: "{{ .Values.fitneedevents.schedule }}"
   jobTemplate:
     metadata:
       labels:
