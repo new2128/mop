@@ -17,8 +17,11 @@ spec:
         spec:
           containers:
             - name: mopfitaliveevents
-              image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
-              imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+              
+              securityContext:
+                 {{- toYaml .Values.securityContext | nindent 12 }}
+              image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
               command: 
                 - python
                 - manage.py
