@@ -18,7 +18,7 @@ spec:
           containers:
             - name: mopfitaliveevents
               image: busybox
-              command: ["date"]
+              command: ["python", "manage.py", "fit_all_events_PSPL", "alive"]
 
           restartPolicy: Never
 
