@@ -16,7 +16,7 @@ spec:
       template:
         spec:
           containers:
-            - name: MOPFitAliveEvents
+            - name: mopfitaliveevents
               image: busybox
               command: ["date"]
 
