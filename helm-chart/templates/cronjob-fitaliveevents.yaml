@@ -27,7 +27,9 @@ spec:
                 - manage.py
                 - fit_all_events_PSPL
                 - alive
-
+              env:
+                {{ include "mop.extraEnv" . | nindent 12 }}
+                {{ include "mop.backendEnv" . | nindent 12 }}
           restartPolicy: Never
 
 
