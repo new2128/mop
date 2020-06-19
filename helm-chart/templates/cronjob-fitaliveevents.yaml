@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/component: "fitaliveevents"
 spec:
-  schedule: "* * * * *"
+  schedule: "* */4 * * *"
   concurrencyPolicy: "Forbid"
   jobTemplate:
     spec:
@@ -18,7 +18,11 @@ spec:
           containers:
             - name: mopfitaliveevents
               image: busybox
-              command: ["python", "manage.py", "fit_all_events_PSPL", "alive"]
+              command: 
+                - python
+                - manage.py
+                - fit_all_events_PSPL
+                - alive
 
           restartPolicy: Never
 
