@@ -73,15 +73,6 @@ Create the environment variables for configuration of this project. They are
 repeated in a bunch of places, so to keep from repeating ourselves, we'll
 build it here and use it everywhere.
 */}}
-{{- define "mop.extraEnv" -}}
-- name: HOME
-  value: "/tmp"
-- name: DEBUG
-  value: {{ .Values.djangoDebug | toString | lower | title | quote }}
-{{- end }}
-{{/*
-Define shared database environment variables
-*/}}
 {{- define "mop.backendEnv" -}}
 - name: DB_HOST
   value: {{ include "mop.dbhost" . | quote }}
@@ -95,4 +86,38 @@ Define shared database environment variables
   value: {{ .Values.postgresql.service.port | quote }}
 - name: SECRET_KEY
   value: {{ .Values.secretKey | quote }}
+- name: HOME
+  value: "/tmp"
+- name: DEBUG
+  value: {{ .Values.djangoDebug | toString | lower | title | quote }}
+- name: "ANTARES_KEY"
+  valueFrom:
+    secretKeyRef:
+      name: mop
+      key: ANTARES_KEY
+- name: "ANTARES_PWD"
+  valueFrom:
+    secretKeyRef:
+      name: mop
+      key: ANTARES_PWD
+- name: "SECRET_KEY"
+  valueFrom:
+    secretKeyRef:
+      name: mop
+      key: SECRET_KEY
+- name: "LCO_API_KEY"
+  valueFrom:
+    secretKeyRef:
+      name: mop
+      key: LCO_API_KEY
+- name: "LCO_PROPOSAL_ID"
+  valueFrom:
+    secretKeyRef:
+      name: mop
+      key: LCO_PROPOSAL_ID
+- name: "LCO_USERNAME"
+  valueFrom:
+    secretKeyRef:
+      name: mop
+      key: LCO_USERNAME
 {{- end -}}

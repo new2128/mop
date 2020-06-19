@@ -4,18 +4,29 @@ metadata:
   name: {{ include "mop.fullname" . }}
   labels:
 {{ include "mop.labels" . | indent 4 }}
+    app.kubernetes.io/component: "backend"
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mop.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: "backend"
   template:
     metadata:
       labels:
         app.kubernetes.io/name: {{ include "mop.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: "backend"
     spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ template "mop.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+
       initContainers:
         # wait for database to become ready
         - name: check-db-ready
@@ -34,10 +45,7 @@ spec:
                 sleep 2;
                 done;
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
-            readOnlyRootFilesystem: true
+            {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
             requests:
               cpu: 50m
@@ -57,10 +65,7 @@ spec:
           env:
             {{- include "mop.backendEnv" . | nindent 12 }}
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
-            readOnlyRootFilesystem: true
+            {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
@@ -74,14 +79,6 @@ spec:
               mountPath: /.astropy
               readonly: false
         {{- end }}
-    
-    {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
-      serviceAccountName: {{ template "mop.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
 
       containers:
         - name: {{ .Chart.Name }}
@@ -99,39 +96,7 @@ spec:
             - --error-logfile=-
             - mop.wsgi
           env:
-            {{ include "mop.extraEnv" . | nindent 12 }}
-            {{ include "mop.backendEnv" . | nindent 12 }}
-            - name: "ANTARES_KEY"
-              valueFrom:
-                  secretKeyRef:
-                       name: mop
-                       key: ANTARES_KEY
-            - name: "ANTARES_PWD"
-              valueFrom:
-                  secretKeyRef:
-                       name: mop
-                       key: ANTARES_PWD
-            - name: "SECRET_KEY"
-              valueFrom:
-                  secretKeyRef:
-                       name: mop
-                       key: SECRET_KEY
-            - name: "LCO_API_KEY"
-              valueFrom:
-                  secretKeyRef:
-                       name: mop
-                       key: LCO_API_KEY
-            - name: "LCO_PROPOSAL_ID"
-              valueFrom:
-                  secretKeyRef:
-                       name: mop
-                       key: LCO_PROPOSAL_ID
-
-            - name: "LCO_USERNAME"
-              valueFrom:
-                  secretKeyRef:
-                       name: mop
-                       key: LCO_USERNAME
+            {{- include "mop.backendEnv" . | nindent 12 }}
           ports:
             - name: http
               containerPort: 8080

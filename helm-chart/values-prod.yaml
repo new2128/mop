@@ -2,6 +2,18 @@
 
 djangoDebug: false
 
+# TODO FIXME: this must be changed before deploying into Production.
+# TODO FIXME: this value must be kept secret
+secretKey: "changeme"
+
+# TODO FIXME: this must be changed before deploying into Production.
+# TODO FIXME: the postgresqlPassword value must be kept secret
+postgresql:
+  hostname: "postgres1-cluster.cluster-cple9sjsskrf.us-west-2.rds.amazonaws.com"
+  postgresqlDatabase: "mop"
+  postgresqlUsername: "mop"
+  postgresqlPassword: "THIS-MUST-BE-CHANGED-AND-KEPT-SECRET"
+
 replicaCount: 1
 
 resources:
@@ -20,3 +32,14 @@ ingress:
     - host: mop.lco.global
       paths:
         - "/"
+
+# CronJob: Fit Alive Events
+fitaliveevents:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi

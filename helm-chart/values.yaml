@@ -7,6 +7,12 @@ djangoDebug: true
 gunicornWorkers: 2
 gunicornTimeout: 300
 
+# CronJob: Fit Alive Events
+fitaliveevents:
+  enabled: true
+  schedule: "* */4 * * *"
+  resources: {}
+
 replicaCount: 1
 
 image:
@@ -32,13 +38,10 @@ securityContext:
   capabilities:
     drop:
     - ALL
-  readOnlyRootFilesystem: false
-  runAsNonRoot: false
-  # TODO: make file system readOnly (etc) when we get rid of sqlite backend
-  #readOnlyRootFilesystem: true
-  #runAsNonRoot: true
-  #runAsUser: 1000
-  #runAsGroup: 1000
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
 
 service:
   type: ClusterIP
@@ -74,13 +77,12 @@ resources: {}
 applyDatabaseMigrations: true
 useDockerizedDatabase: true
 
-djangoDatabaseEngine: "django.db.backends.postgresql"
 postgresql:
   # see templates/_helpers.tpl for hostname generation
   hostname: ""
+  postgresqlDatabase: "postgres"
   postgresqlUsername: "postgres"
   postgresqlPassword: "changeme"
-  postgresqlDatabase: "postgres"
   service:
     port: "5432"
   resources:
