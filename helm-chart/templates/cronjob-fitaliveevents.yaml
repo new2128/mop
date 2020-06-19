@@ -18,7 +18,7 @@ spec:
         {{- include "mop.labels" . | nindent 8 }}
         app.kubernetes.io/component: "fitaliveevents"
     spec:
-      activeDeadlineSeconds: 600
+      activeDeadlineSeconds: 3600
       template:
         metadata:
           labels:
