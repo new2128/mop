@@ -40,3 +40,25 @@ fitneedevents:
     limits:
       cpu: 1000m
       memory: 1024Mi
+
+# CronJob: Run TAP
+runtap:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+
+# CronJob: Run TAP
+runtap:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi

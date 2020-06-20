@@ -14,7 +14,7 @@ class Command(BaseCommand):
     
     def add_arguments(self, parser):
 
-        parser.add_argument('events_to_fit', help='all, alive or [years]')
+        parser.add_argument('events_to_fit', help='all, alive, need or [years]')
 
     
     def handle(self, *args, **options):
