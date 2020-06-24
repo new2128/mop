@@ -3,6 +3,8 @@ from tom_dataproducts.models import ReducedDatum
 from tom_targets.models import Target
 from astropy.time import Time
 from mop.toolbox import fittools
+from mop.brokers import gaia as gaia_mop
+
 
 import json
 import numpy as np
@@ -19,12 +21,25 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
        target, created = Target.objects.get_or_create(name= options['target_name'])
+       	
+       if 'Gaia' in target.name:
 
+           gaia_mop.update_gaia_errors(target)
 
        datasets = ReducedDatum.objects.filter(target=target)
 
        time = [Time(i.timestamp).jd for i in datasets if i.data_type == 'photometry']
-       phot = [[json.loads(i.value)['magnitude'],json.loads(i.value)['error'],json.loads(i.value)['filter']] for i in datasets if i.data_type == 'photometry']
+       phot = []
+       for data in datasets:
+           if data.data_type == 'photometry':
+                try:
+                     phot.append([json.loads(data.value)['magnitude'],json.loads(data.value)['error'],json.loads(data.value)['filter']])
+           
+                except:
+                     # Weights == 1
+                     phot.append([json.loads(data.value)['magnitude'],1,json.loads(data.value)['filter']])
+               
+              
 
        photometry = np.c_[time,phot]
        
@@ -36,7 +51,23 @@ class Command(BaseCommand):
             
              emag_limit = None
 
-       t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry,emag_limit)
+       t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov,model = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry,emag_limit)
+
+       #Add photometry model
+       data = {'lc_model_time': model.lightcurve_magnitude[:,0].tolist(),
+               'lc_model_magnitude': model.lightcurve_magnitude[:,1].tolist()
+                        }
+
+       rd, created = ReducedDatum.objects.get_or_create(
+                  timestamp=datetime.datetime.utcnow(),
+                  value=json.dumps(data),
+                  source_name='MOP',
+                  source_location=target.name,
+                  data_type='lc_model',
+                  target=target)
+       
+       if created:
+            rd.save()
 
        time_now = Time(datetime.datetime.now()).jd
        how_many_tE = (time_now-t0_fit)/tE_fit
@@ -51,7 +82,7 @@ class Command(BaseCommand):
           alive = True
        
 
-       extras = {'Alive':alive, 't0':np.around(t0_fit,3),'u0':np.around(u0_fit,5),'tE':np.around(tE_fit,3),
+       extras = {'Alive':alive, 't0':np.around(t0_fit,3),'u0':np.around(np.max([10**-5,u0_fit]),5),'tE':np.around(tE_fit,3),
                  'piEN':np.around(piEN_fit,5),'piEE':np.around(piEE_fit,5),
                  'Source_magnitude':np.around(mag_source_fit,3),
                  'Blend_magnitude':np.around(mag_blend_fit,3),
@@ -59,5 +90,5 @@ class Command(BaseCommand):
                  'Fit_covariance':json.dumps(cov.tolist())}
        target.save(extras = extras)
 
-      
+       
 

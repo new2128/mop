@@ -18,3 +18,69 @@ ingress:
     - host: mop-dev.lco.gtn
       paths:
         - "/"
+
+# CronJob: Fit Alive Events
+fitaliveevents:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+
+# CronJob: Fit Need Events
+fitneedevents:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+
+# CronJob: Run TAP
+runtap:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+
+# CronJob: Harvest IPAC ZTF
+harvestztfipac:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+
+# CronJob: Harvest GAIA
+harvestgaia:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+
+# CronJob: Add Galactic Coordinates
+addgalacticcoordinates:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi

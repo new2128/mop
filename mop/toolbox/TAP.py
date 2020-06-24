@@ -15,7 +15,7 @@ from pyLIMA import microlmodels
 ZP = 27.4 #pyLIMA convention
 
 
-def TAP_observing_mode(priority,priority_error, previous_observing_mode):
+def TAP_observing_mode(priority,priority_error):
 
    if priority-priority_error>10:
 
@@ -23,10 +23,20 @@ def TAP_observing_mode(priority,priority_error, previous_observing_mode):
 
    else:
 
-       return previous_observing_mode
+       return None
 
 
+def calculate_exptime_floyds(magin):
+    """
+    This function calculates the required exposure time
+    for a given iband magnitude for the floyds spectra
+    """
+    exposure_time = 3600 #s
 
+    if magin<11:
+       exposure_time = 1800 #s 
+
+    return exposure_time 
 
 
 def calculate_exptime_omega_sdss_i(magin):
@@ -45,7 +55,7 @@ def calculate_exptime_omega_sdss_i(magin):
     snr = 1.0 / np.exp(lrms)
     # target 4% -> snr 25
 
-    return float(np.max((5,np.min((np.round((25. / snr)**2 * 300., 1),500))))) #no need to more 5 min exposure time, since we have different apertures, but more than 5 s at least
+    return float(np.max((5,np.min((np.round((25. / snr)**2 * 300., 1),300))))) #no need to more 5 min exposure time, since we have different apertures, but more than 5 s at least
 
 
 
@@ -191,10 +201,15 @@ def TAP_telescope_class(sdss_i_mag):
 
 def TAP_mag_now(target):
 
+   fs = 10**((ZP-target.extra_fields['Source_magnitude'])/2.5)
+   fb = 10**((ZP-target.extra_fields['Blend_magnitude'])/2.5)
+
+   if np.isnan(fb):
+      fb = 0 
    fit_parameters = [target.extra_fields['t0'],target.extra_fields['u0'],target.extra_fields['tE'],
                      target.extra_fields['piEN'],target.extra_fields['piEE'],
-                     10**((ZP-target.extra_fields['Source_magnitude'])/2.5),
-                     10**((ZP-target.extra_fields['Blend_magnitude'])/2.5)]
+                     fs,
+                     fb]
  
    current_event = event.Event()
    current_event.name = 'MOP_to_fit'

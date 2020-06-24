@@ -14,7 +14,7 @@ class Command(BaseCommand):
     
     def add_arguments(self, parser):
        
-        pass
+        parser.add_argument('target_name', help='name of the event to fit')
     
     def handle(self, *args, **options):
 
@@ -28,69 +28,95 @@ class Command(BaseCommand):
             tap_list = TargetList(name='TAP')
             tap_list.save()
         
-        list_of_events_alive = Target.objects.filter(targetextra__in=TargetExtra.objects.filter(key='Alive', value=True))  
+        if options['target_name'] == 'all':
+       
+
+            list_of_events_alive = Target.objects.filter(targetextra__in=TargetExtra.objects.filter(key='Alive', value=True))  
+        else:
+
+            target, created = Target.objects.get_or_create(name= options['target_name'])
+            list_of_events_alive = [target]
 
         for event in list_of_events_alive[:]:
 
-            try:
-
-                ### Regular obs
-
-                event_in_the_Bulge = TAP.event_in_the_Bulge(event.ra, event.dec)
-                
-                if (event_in_the_Bulge) & (event.extra_fields['Baseline_magnitude']>17):
-
-                   pass
- 
-                else:
- 
-                   obs_control.build_and_submit_regular_phot(event)
-
-                time_now = Time(datetime.datetime.now()).jd
-                t0_pspl = event.extra_fields['t0']
-                u0_pspl = event.extra_fields['u0']
-                tE_pspl = event.extra_fields['tE']
+            if 'Microlensing' not in event.extra_fields['Classification']:
+               pass
             
+            else:
+                    try:
 
-                covariance = np.array(json.loads(event.extra_fields['Fit_covariance']))
+                        time_now = Time(datetime.datetime.now()).jd
+                        t0_pspl = event.extra_fields['t0']
+                        u0_pspl = event.extra_fields['u0']
+                        tE_pspl = event.extra_fields['tE']
+                    
 
-                planet_priority = TAP.TAP_planet_priority(time_now,t0_pspl,u0_pspl,tE_pspl)
-                planet_priority_error = TAP.TAP_planet_priority_error(time_now,t0_pspl,u0_pspl,tE_pspl,covariance)
- 
-                #psi_deriv = TAP.psi_derivatives_squared(time_now,t0_pspl,u0_pspl,tE_pspl) 
-                #error = (psi_deriv[2] * covariance[2,2] + psi_deriv[1] * covariance[1,1] + psi_deriv[0] * covariance[0,0])**0.5
-                ### need to create a reducedatum for planet priority
-            
-            
-                data = {'tap': planet_priority,
-                        'tap_error': planet_priority_error
-                        }
+                        covariance = np.array(json.loads(event.extra_fields['Fit_covariance']))
 
-                rd, created = ReducedDatum.objects.get_or_create(
-                          timestamp=datetime.datetime.utcnow(),
-                          value=json.dumps(data),
-                          source_name='MOP',
-                          source_location=event.name,
-                          data_type='TAP_priority',
-                          target=event)
-               
-                if created:
-                    rd.save()
-            
-                new_observing_mode = TAP.TAP_observing_mode(planet_priority,planet_priority_error,  
-                                                    event.extra_fields['Observing_mode'])
+                        planet_priority = TAP.TAP_planet_priority(time_now,t0_pspl,u0_pspl,tE_pspl)
+                        planet_priority_error = TAP.TAP_planet_priority_error(time_now,t0_pspl,u0_pspl,tE_pspl,covariance)
 
-                if new_observing_mode != 'No':
-                   tap_list.targets.add(event)
-              
+                        #psi_deriv = TAP.psi_derivatives_squared(time_now,t0_pspl,u0_pspl,tE_pspl) 
+                        #error = (psi_deriv[2] * covariance[2,2] + psi_deriv[1] * covariance[1,1] + psi_deriv[0] * covariance[0,0])**0.5
+                        ### need to create a reducedatum for planet priority
+                        
+                    
+                        data = {'tap': planet_priority,
+                                'tap_error': planet_priority_error
+                                }
 
-                extras = {'TAP_priority':np.around(planet_priority,5),'Observing_mode':new_observing_mode}
-                event.save(extras = extras)
-                print(planet_priority,planet_priority_error)
-               
-                if new_observing_mode == 'Priority':
-                   
-                   obs_control.build_and_submit_priority_phot(event)
+                        rd, created = ReducedDatum.objects.get_or_create(
+                                  timestamp=datetime.datetime.utcnow(),
+                                  value=json.dumps(data),
+                                  source_name='MOP',
+                                  source_location=event.name,
+                                  data_type='TAP_priority',
+                                  target=event)
+                       
+                        if created:
+                            rd.save()
+                        extras = {'TAP_priority':np.around(planet_priority,5)}
+                        event.save(extras = extras) 
 
-            except:
-                print('Can not perform TAP for this target')
+                      
+
+
+                        ### Regular obs
+
+                        event_in_the_Bulge = TAP.event_in_the_Bulge(event.ra, event.dec)
+                        
+                        if (event_in_the_Bulge) & (event.extra_fields['Baseline_magnitude']>17):
+
+                               extras = {'Observing_mode':'No'}
+                               event.save(extras = extras)
+                               return
+         
+                        else:
+
+                           if event.extra_fields['Alive'] == True:
+                               extras = {'Observing_mode':'Regular'}
+                               event.save(extras = extras)
+                               obs_control.build_and_submit_regular_phot(event)
+                           else:
+                               extras = {'Observing_mode':'No'}
+                               event.save(extras = extras)
+                        
+
+                        new_observing_mode = TAP.TAP_observing_mode(planet_priority,planet_priority_error)
+
+                        if new_observing_mode:
+                           tap_list.targets.add(event)
+                      
+
+                           extras = {'Observing_mode':new_observing_mode}
+                           event.save(extras = extras)
+                           print(planet_priority,planet_priority_error)
+                           obs_control.build_and_submit_priority_phot(event)
+
+                        ### Spectroscopy
+                        if event.extra_fields['Spectras']<1:
+                            obs_control.build_and_submit_regular_spectro(event) 
+                        
+                    except:
+
+                        print('Can not perform TAP for this target')

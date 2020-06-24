@@ -237,7 +237,8 @@ DATA_PRODUCT_TYPES = {
     'fits_file': ('fits_file', 'FITS File'),
     'spectroscopy': ('spectroscopy', 'Spectroscopy'),
     'image_file': ('image_file', 'Image File'),
-    'TAP_priority': ('TAP_priority', 'TAP Priority')
+    'TAP_priority': ('TAP_priority', 'TAP Priority'),
+    'lc_model': ('lc_model', 'Model'),
 }
 
 DATA_PROCESSORS = {

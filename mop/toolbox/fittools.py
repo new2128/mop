@@ -2,6 +2,8 @@ import numpy as np
 from pyLIMA import event
 from pyLIMA import telescopes
 from pyLIMA import microlmodels
+from pyLIMA import microloutputs
+from pyLIMA import microltoolbox
 
 def chi2(params,fit):
 
@@ -42,7 +44,7 @@ def fit_PSPL(photometry, emag_limit = None):
        Model = microlmodels.create_model('PSPL', current_event, parallax=['None', 0])
        Model.parameters_boundaries[0] = [Model.parameters_boundaries[0][0],Model.parameters_boundaries[0][-1]+500]
        Model.parameters_boundaries[1] = [0,2]
-       current_event.fit(Model, 'DE',DE_population_size=10)
+       current_event.fit(Model, 'DE',DE_population_size=20)
 
        t0_fit =  current_event.fits[-1].fit_results[0]
        u0_fit =  current_event.fits[-1].fit_results[1]
@@ -62,6 +64,20 @@ def fit_PSPL(photometry, emag_limit = None):
 
 def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None):
  
+       # Filter orders
+       filters_order = ['I','ip','i_ZTF','r_ZTF','g_ZTF','gp','G']
+      
+
+       filters = np.unique(photometry[:,-1])
+       order = []
+       for fil in filters_order:
+
+           mask = np.where(filters==fil)[0]
+           if len(mask)!= 0:
+                order += mask.tolist() 
+       filters = filters[order]
+
+
 
        t0_fit,u0_fit,tE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,chi2_fit = fit_PSPL(photometry, emag_limit = None)
 
@@ -69,9 +85,7 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None):
        current_event.name = 'MOP_to_fit'
 
        current_event.ra = ra
-       current_event.dec = dec
-
-       filters = np.unique(photometry[:,-1])
+       current_event.dec = dec 
 
        for ind,filt in enumerate(filters):
 
@@ -95,14 +109,14 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None):
        t0_par = t0_fit
 
        Model_parallax = microlmodels.create_model('PSPL', current_event, parallax=['Full', t0_par])
-       Model_parallax.parameters_boundaries[0] = [t0_fit-10,t0_fit+10]
+       Model_parallax.parameters_boundaries[0] = [t0_fit-100,t0_fit+100]
       
        Model_parallax.parameters_boundaries[1] = [0,2]
        Model_parallax.parameters_boundaries[2] = [0.1,500]
        #Model_parallax.parameters_boundaries[3] = [-1,1]
        #Model_parallax.parameters_boundaries[4] = [-1,1]
        Model_parallax.parameters_guess = [ t0_fit,u0_fit,tE_fit,0,0]
-       current_event.fit(Model_parallax, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit')
+       current_event.fit(Model_parallax, 'DE',DE_population_size=20,flux_estimation_MCMC = 'polyfit')
 
        #if (chi2_fit-current_event.fits[-1].fit_results[-1])/current_event.fits[-1].fit_results[-1]<0.1:
        
@@ -122,5 +136,14 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None):
        except:
            mag_blend_fit = 0
            mag_baseline_fit = mag_source
-       
-       return [t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,current_event.fits[-1].fit_covariance]
+
+       microloutputs.create_the_fake_telescopes(current_event.fits[0],current_event.fits[0].fit_results[:-1])
+       model_telescope = current_event.fits[0].event.fake_telescopes[0]
+       pyLIMA_parameters = Model_parallax.compute_pyLIMA_parameters(current_event.fits[0].fit_results[:-1])
+       flux_model = current_event.fits[0].model.compute_the_microlensing_model(model_telescope, pyLIMA_parameters)[0]
+       magnitude = microltoolbox.flux_to_magnitude(flux_model)
+       model_telescope.lightcurve_magnitude[:,1] = magnitude
+
+       return [t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,
+               mag_source_fit,mag_blend_fit,mag_baseline_fit,
+               current_event.fits[-1].fit_covariance,model_telescope]

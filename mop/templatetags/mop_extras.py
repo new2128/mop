@@ -12,6 +12,8 @@ from tom_dataproducts.models import DataProduct, ReducedDatum
 from tom_dataproducts.processors.data_serializers import SpectrumSerializer
 
 from astropy.time import Time
+import numpy as np
+
 register = template.Library()
 
 
@@ -79,6 +81,25 @@ def mop_photometry(target):
                  )
 
     ))
+
+    ### Try to plot model if exist
+    try:
+       for datum in ReducedDatum.objects.filter(target=target, data_type=settings.DATA_PRODUCT_TYPES['lc_model'][0]).order_by('-id')[:1]:
+
+            values = json.loads(datum.value)
+            time = np.array(values['lc_model_time'])-2450000
+            mag = np.array(values['lc_model_magnitude'])
+            fig.add_trace(go.Scatter(x=time, y=mag,
+                    mode='lines',
+                    name='Model',
+                    opacity=0.5,
+                    line = dict(color='rgb(128,128,128)',
+                                width=5,
+                                ),
+                     ))
+    except:
+
+       pass
     fig.update_layout(
 
     annotations=[
@@ -87,11 +108,14 @@ def mop_photometry(target):
              xanchor="left",
              y=0.05,
              yref="paper",
-             text="JD now",
+             text="JD now : "+str(np.round(current_time,3))+" ("+str(Time.now().value).split(' ')[0]+")",
              showarrow=False,
              textangle=-90,)
-    ]
+    ],		
+             xaxis_title="HJD-2450000",
+             yaxis_title="Mag",
     )
+
     return {
         'target': target,
         'plot': offline.plot(fig, output_type='div', show_link=False)
