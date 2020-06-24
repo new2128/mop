@@ -14,6 +14,9 @@ from pyLIMA import microlmodels
 
 ZP = 27.4 #pyLIMA convention
 
+def TAP_anomaly():
+
+    pass
 
 def TAP_observing_mode(priority,priority_error):
 
