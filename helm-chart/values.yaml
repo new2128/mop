@@ -26,6 +26,24 @@ runtap:
   schedule: "* */4 * * *"
   resources: {}
 
+# CronJob: Harvest ZTF IPAC
+harvestztfipac:
+  enabled: true
+  schedule: "0 8 * * *"
+  resources: {}
+
+# CronJob: Harvest GAIA
+harvestgaia:
+  enabled: true
+  schedule: "0 12 * * *"
+  resources: {}
+
+# CronJob: Add Galactic Coordinates
+addgalacticcoordinates:
+  enabled: true
+  schedule: "0 */1 * * *"
+  resources: {}
+
 replicaCount: 1
 
 image:
