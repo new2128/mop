@@ -1,0 +1,12 @@
+.git
+*.pyc
+*.pyo
+__pycache__
+env/
+.idea
+*~
+README.md
+LICENSE
+Jenkinsfile
+docker-compose.yml
+helm-chart

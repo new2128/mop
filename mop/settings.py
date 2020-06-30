@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import ast
 import tempfile
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -22,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY','+xg%_n7l==$@v7))t1&amp;@a_tl)qo$=g7rl^wp7bx^qu+g7+hiaj')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','+xg%_n7l==$@v7))t1&amp;@a_tl)qo$=g7rl^wp7bx^qu+g7+hiaj')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', False)
+DEBUG = ast.literal_eval(os.getenv('DJANGO_DEBUG', 'False'))
 
 ALLOWED_HOSTS = ['*']
 
@@ -260,11 +261,11 @@ TOM_ALERT_CLASSES = [
     'tom_alerts.brokers.gaia.GaiaBroker',
 ]
 
-BROKER_CREDENTIALS = { 
+BROKER_CREDENTIALS = {
 
 'antares': {
         'api_key': os.environ.get('ANTARES_KEY','dummy'),
-        'api_secret': os.environ.get('ANTARES_PWD','dummy')
+        'api_secret': os.environ.get('ANTARES_PASSWORD','dummy')
     }
 }
 
@@ -293,7 +294,7 @@ EXTRA_FIELDS = [{'name':'Alive','type':'boolean', 'default':True},
                 {'name':'Spectras','type':'number','default':0}]
 
 TARGET_PERMISSIONS_ONLY=True
-                
+
 # Authentication strategy can either be LOCKED (required login for all views)
 # or READ_ONLY (read only access to views)
 AUTH_STRATEGY = 'READ_ONLY'

@@ -1,7 +1,33 @@
 # Helm chart values for Development Deployment
 
+# Development mode: we can enable debug mode
+djangoDebug: true
+
+# Django Secret Key
+# This is overridden in eks-production1/dev/mop-dev-values.yaml
+djangoSecretKey: "overridden"
+
+# Microlensing Observation Portal Secret Values
+# These are overridden in eks-production1/dev/mop-dev-values.yaml
+antaresKey: ""
+antaresPassword: ""
+lcoApiKey: ""
+lcoProposalId: ""
+lcoUsername: ""
+
+# AWS Credentials
+# These are overridden in eks-production1/dev/mop-dev-values.yaml
+awsAccessKeyId: ""
+awsSecretAccessKey: ""
+awsS3Bucket: ""
+
+# Development mode: one replica is enough, we can live with short downtime
+# if a machine fails or is taken offline for maintenance
 replicaCount: 1
 
+# PostgreSQL database configuration is used from values.yaml
+
+# MOP Container CPU/Memory Resource Requests/Limits
 resources:
   requests:
     cpu: 10m
@@ -10,6 +36,7 @@ resources:
     cpu: 1000m
     memory: 1024Mi
 
+# HTTP Router Configuration
 ingress:
   enabled: true
   annotations:

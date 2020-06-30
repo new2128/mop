@@ -2,8 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-djangoDebug: true
-
 gunicornWorkers: 2
 gunicornTimeout: 300
 
@@ -113,6 +111,7 @@ postgresql:
   hostname: ""
   postgresqlDatabase: "postgres"
   postgresqlUsername: "postgres"
+  # You MUST override password in secret configuration file
   postgresqlPassword: "changeme"
   service:
     port: "5432"
@@ -124,8 +123,27 @@ postgresql:
       cpu: 400m
       memory: 512Mi
 
-secretKey: "changeme"
+# Django Secret Key (must be overridden in secret configuration file)
+djangoSecretKey: "changeme"
 
+# Django Debug Mode (DISABLE in production)
+djangoDebug: true
+
+# Microlensing Observation Portal Secret Values
+# These MUST be overridden in secret configuration file
+antaresKey: ""
+antaresPassword: ""
+lcoApiKey: ""
+lcoProposalId: ""
+lcoUsername: ""
+
+# AWS Credentials
+# These MUST be overriden in secret configuration file
+awsAccessKeyId: ""
+awsSecretAccessKey: ""
+awsS3Bucket: ""
+
+# Automatically load an initial dataset into the database
 loadInitialData:
   enabled: false
 

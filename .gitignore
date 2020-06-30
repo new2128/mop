@@ -6,4 +6,4 @@ env/
 #pycharm and emacs
 .idea
 *~
-
+helm-chart/charts/*.tgz

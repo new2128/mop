@@ -1,29 +1,56 @@
 # Helm chart values for Production Deployment
 
+# Production mode: disable Django Debug Mode (it can leak passwords/keys)
+# Rather than toggling this value, reproduce your problem in the Development
+# environment instead.
 djangoDebug: false
 
-# TODO FIXME: this must be changed before deploying into Production.
-# TODO FIXME: this value must be kept secret
-# secretKey: "changeme"
+# Django Secret Key
+# This is overridden in eks-production1/prod/mop-values.yaml
+djangoSecretKey: "overridden"
 
-# TODO FIXME: this must be changed before deploying into Production.
-# TODO FIXME: the postgresqlPassword value must be kept secret
-#postgresql:
-#  hostname: "postgres1-cluster.cluster-cple9sjsskrf.us-west-2.rds.amazonaws.com"
-#  postgresqlDatabase: "mop"
-#  postgresqlUsername: "mop"
-#  postgresqlPassword: "THIS-MUST-BE-CHANGED-AND-KEPT-SECRET"
+# Microlensing Observation Portal Secret Values
+# These are overridden in eks-production1/prod/mop-values.yaml
+antaresKey: ""
+antaresPassword: ""
+lcoApiKey: ""
+lcoProposalId: ""
+lcoUsername: ""
 
-replicaCount: 1
+# AWS Credentials
+# These are overridden in eks-production1/prod/mop-values.yaml
+awsAccessKeyId: ""
+awsSecretAccessKey: ""
+awsS3Bucket: ""
 
+# Production mode: run two replicas so that we can handle single machine
+# outages (whether due to unplanned failure or planned maintenance)
+replicaCount: 2
+
+# Production mode: use production PostgreSQL database server
+useDockerizedDatabase: false
+
+# Apply database migrations when the application is started
+applyDatabaseMigrations: true
+
+# PostgreSQL server configuration is overridden in
+# eks-production1/prod/mop-values.yaml
+postgresql:
+  hostname: "postgres1-cluster.cluster-cple9sjsskrf.us-west-2.rds.amazonaws.com"
+  postgresqlDatabase: "mop"
+  postgresqlUsername: "mop"
+  postgresqlPassword: "overridden"
+
+# MOP Container CPU/Memory Resource Requests/Limits
 resources:
   requests:
-    cpu: 50m
+    cpu: 10m
     memory: 256Mi
   limits:
     cpu: 1000m
     memory: 1024Mi
 
+# HTTP router configuration
 ingress:
   enabled: true
   annotations:

@@ -88,36 +88,24 @@ build it here and use it everywhere.
   value: {{ .Values.secretKey | quote }}
 - name: HOME
   value: "/tmp"
-- name: DEBUG
+- name: DJANGO_DEBUG
   value: {{ .Values.djangoDebug | toString | lower | title | quote }}
-- name: "ANTARES_KEY"
-  valueFrom:
-    secretKeyRef:
-      name: mop
-      key: ANTARES_KEY
-- name: "ANTARES_PWD"
-  valueFrom:
-    secretKeyRef:
-      name: mop
-      key: ANTARES_PWD
-- name: "SECRET_KEY"
-  valueFrom:
-    secretKeyRef:
-      name: mop
-      key: SECRET_KEY
-- name: "LCO_API_KEY"
-  valueFrom:
-    secretKeyRef:
-      name: mop
-      key: LCO_API_KEY
-- name: "LCO_PROPOSAL_ID"
-  valueFrom:
-    secretKeyRef:
-      name: mop
-      key: LCO_PROPOSAL_ID
-- name: "LCO_USERNAME"
-  valueFrom:
-    secretKeyRef:
-      name: mop
-      key: LCO_USERNAME
+- name: DJANGO_SECRET_KEY
+  value: {{ .Values.djangoSecretKey | quote }}
+- name: ANTARES_KEY
+  value: {{ .Values.antaresKey | quote }}
+- name: ANTARES_PASSWORD
+  value: {{ .Values.antaresPassword | quote }}
+- name: LCO_API_KEY
+  value: {{ .Values.lcoApiKey | quote }}
+- name: LCO_PROPOSAL_ID
+  value: {{ .Values.lcoProposalId | quote }}
+- name: LCO_USERNAME
+  value: {{ .Values.lcoUsername | quote }}
+- name: AWS_ACCESS_KEY_ID
+  value: {{ .Values.awsAccessKeyId | quote }}
+- name: AWS_SECRET_ACCESS_KEY
+  value: {{ .Values.awsSecretAccessKey | quote }}
+- name: AWS_S3_BUCKET
+  value: {{ .Values.awsS3Bucket | quote }}
 {{- end -}}
