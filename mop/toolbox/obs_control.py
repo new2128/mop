@@ -20,7 +20,7 @@ def check_pending_observations(name,status):
     token  = os.getenv('LCO_API_KEY')
     username =  os.getenv('LCO_USERNAME')
     headers = {'Authorization': 'Token ' + token}
-    url = os.path.join("https://observe.lco.global/api/requestgroups/?state=PENDING&user="+username+"&name="+name)
+    url = os.path.join("https://observe.lco.global/api/requestgroups/?state="+status+"&user="+username+"&name="+name)
 
     response = requests.get(url, headers=headers, timeout=20).json()
 
@@ -86,6 +86,13 @@ def build_and_submit_spectro(target, obs_type):
        if need_to_submit is False:
 
           return
+       
+       # Do no trigger if a spectrum is already taken   
+       need_to_submit = check_pending_observations(obs_name,'COMPLETED')
+
+       if need_to_submit is False:
+
+          return   
 
        start = datetime.datetime.utcnow().isoformat()
        end  = (datetime.datetime.utcnow()+datetime.timedelta(days=obs_duration)).isoformat()
