@@ -244,7 +244,7 @@ DATA_PRODUCT_TYPES = {
 }
 
 DATA_PROCESSORS = {
-    'photometry': 'custom_dataproducts.processors.photometry_processor.PhotometryProcessor',
+    'photometry': 'custom_dataproducts.PhotometryProcessor',
     'spectroscopy': 'tom_dataproducts.processors.spectroscopy_processor.SpectroscopyProcessor',
 }
 
