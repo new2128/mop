@@ -111,3 +111,15 @@ addgalacticcoordinates:
     limits:
       cpu: 1000m
       memory: 1024Mi
+      
+# CronJob: Open targets to OMEGA users
+opentargetstoomegausers:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi      
+      

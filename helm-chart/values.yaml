@@ -41,6 +41,12 @@ addgalacticcoordinates:
   enabled: true
   schedule: "0 */1 * * *"
   resources: {}
+  
+# CronJob: Open targets to OMEGA users
+opentargetstoomegausers:
+  enabled: true
+  schedule: "0 */1 * * *"
+  resources: {}
 
 replicaCount: 1
 
