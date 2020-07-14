@@ -47,6 +47,7 @@ class MOABroker(GenericBroker):
         #ingest the TOM db
         list_of_targets = []
         self.event_dictionnary = {}
+        time_now = Time(datetime.datetime.now()).jd
         for year in years:
             url_file_path = os.path.join(BROKER_URL+'alert'+str(year)+'/index.dat' )
             events = urllib.request.urlopen(url_file_path).readlines()
@@ -74,7 +75,7 @@ class MOABroker(GenericBroker):
     def find_and_ingest_photometry(self, targets):
 
         
-        
+        time_now = Time(datetime.datetime.now()).jd
         for target in targets:
             
             year = target.name.split('-')[1]
@@ -97,7 +98,7 @@ class MOABroker(GenericBroker):
                     tot_flux = float(self.event_dictionnary[target.name][2])+float(phot[1])
                     mag = float(self.event_dictionnary[target.name][1])-2.5*np.log10(tot_flux)
                     emag = float(phot[2])/tot_flux*2.5/np.log(10)
-                    if (np.isfinite(mag)) & (emag>0) & (float(phot[0])>2451544.50000): 
+                    if (np.isfinite(mag)) & (emag>0) & (float(phot[0])>time_now-5*365.25): #Harvest the last 5 years 
                         jd.append(float(phot[0]))
                         mags.append(mag)
                         emags.append(emag)
