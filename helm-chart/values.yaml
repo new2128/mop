@@ -59,6 +59,22 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+# NGINX image (static files webserver)
+nginx:
+  image:
+    repository: "nginx"
+    tag: "1.16-alpine"
+    pullPolicy: IfNotPresent
+  resources: {}
+  securityContext:
+    capabilities:
+      drop:
+      - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 101
+    runAsGroup: 101
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
