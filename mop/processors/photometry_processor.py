@@ -9,6 +9,7 @@ from django.core.files.storage import default_storage
 from tom_dataproducts.data_processor import DataProcessor
 from tom_dataproducts.exceptions import InvalidFileFormatException
 
+# This is a custom processor made for AWS S3 bucket compliance
 
 class PhotometryProcessor(DataProcessor):
 
@@ -33,7 +34,10 @@ class PhotometryProcessor(DataProcessor):
             raise InvalidFileFormatException('Empty table or invalid file type')
 
         for datum in data:
-            time = Time(float(datum['time']), format='mjd')
+            if float(datum['time'])>2400000.5:
+                time = Time(float(datum['time']), format='jd')
+            else:
+                time = Time(float(datum['time']), format='mjd')
             utc = TimezoneInfo(utc_offset=0*units.hour)
             time.format = 'datetime'
             value = {

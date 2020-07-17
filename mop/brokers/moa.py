@@ -98,7 +98,7 @@ class MOABroker(GenericBroker):
                     tot_flux = float(self.event_dictionnary[target.name][2])+float(phot[1])
                     mag = float(self.event_dictionnary[target.name][1])-2.5*np.log10(tot_flux)
                     emag = float(phot[2])/tot_flux*2.5/np.log(10)
-                    if (np.isfinite(mag)) & (emag>0) & (float(phot[0])>time_now-5*365.25): #Harvest the last 5 years 
+                    if (np.isfinite(mag)) & (emag>0) & (emag<0.25) & (float(phot[0])>time_now-5*365.25): #Harvest the last 5 years 
                         jd.append(float(phot[0]))
                         mags.append(mag)
                         emags.append(emag)
@@ -118,7 +118,7 @@ class MOABroker(GenericBroker):
                     jd = Time(point[0], format='jd', scale='utc')
                     jd.to_datetime(timezone=TimezoneInfo())
                     data = {   'magnitude': point[1],
-                           'filter': 'MOA_R',
+                           'filter': 'R',
                            'error': point[2]
                        }
                     rd, created = ReducedDatum.objects.get_or_create(
