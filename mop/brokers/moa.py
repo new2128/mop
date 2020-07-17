@@ -13,7 +13,7 @@ import os
 import numpy as np
 import json
 from astropy.time import Time, TimezoneInfo
-
+import datetime
 
 BROKER_URL = 'https://www.massey.ac.nz/~iabond/moa/'
 photometry = "https://www.massey.ac.nz/~iabond/moa/alert2019/fetchtxt.php?path=moa/ephot/"
