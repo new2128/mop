@@ -35,6 +35,12 @@ harvestgaia:
   enabled: true
   schedule: "0 12 * * *"
   resources: {}
+  
+# CronJob: Harvest MOA
+harvestmoa:
+  enabled: true
+  schedule: "0 2 * * *"
+  resources: {}
 
 # CronJob: Add Galactic Coordinates
 addgalacticcoordinates:
@@ -47,6 +53,7 @@ opentargetstoomegausers:
   enabled: true
   schedule: "0 */1 * * *"
   resources: {}
+
 
 replicaCount: 1
 
