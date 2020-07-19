@@ -8,14 +8,14 @@ gunicornTimeout: 300
 # CronJob: Fit Alive Events
 fitaliveevents:
   enabled: true
-  schedule: "* */4 * * *"
+  schedule: "* */12 * * *"
   resources: {}
 
 
 # CronJob: Fit Need Events
 fitneedevents:
   enabled: true
-  schedule: "* */12 * * *"
+  schedule: "* */4 * * *"
   resources: {}
 
 # CronJob: Run TAP
@@ -39,7 +39,7 @@ harvestgaia:
 # CronJob: Harvest MOA
 harvestmoa:
   enabled: true
-  schedule: "0 2 * * *"
+  schedule: "0 */12 * * *"
   resources: {}
 
 # CronJob: Add Galactic Coordinates
