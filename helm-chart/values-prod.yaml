@@ -50,11 +50,24 @@ resources:
     cpu: 1000m
     memory: 1024Mi
 
+# NGINX (static files) CPU/Memory resource Requests/Limits
+resources:
+  requests:
+    cpu: 10m
+    memory: 16Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+
 # HTTP router configuration
 ingress:
   enabled: true
   annotations:
     kubernetes.io/ingress.class: nginx-ingress-public
+    # Turn these on to disable all request buffering. In that case, you are on
+    # your own in case of a DoS (Denial of Service) attack, or broken clients, or ..
+    #nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    #nginx.ingress.kubernetes.io/proxy-body-size: "0"
   hosts:
     - host: mop.lco.global
       paths:
@@ -105,6 +118,17 @@ harvestztfipac:
 
 # CronJob: Harvest GAIA
 harvestgaia:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+      
+# CronJob: Harvest MOA
+harvestmoa:
   enabled: true
   resources:
     requests:

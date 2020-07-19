@@ -11,7 +11,3 @@ COPY requirements.txt /mop
 RUN pip install --no-cache-dir -r /mop/requirements.txt
 
 COPY . /mop
-
-RUN python manage.py collectstatic --noinput
-
-

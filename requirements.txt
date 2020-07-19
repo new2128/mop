@@ -1,8 +1,10 @@
-django==3.0.3
-tomtoolkit==1.4.0
-tom-antares==0.1.0
+django>=3.0.7
+tomtoolkit>=1.7.0
+tom-antares>=0.1.0
 psycopg2===2.8.4
 gunicorn[gevent]==20.0.4
 factory_boy==2.12.0
 whitenoise==5.0.1
 pyLIMA>=0.8
+django-storages
+boto3

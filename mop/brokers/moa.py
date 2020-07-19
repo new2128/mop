@@ -13,7 +13,7 @@ import os
 import numpy as np
 import json
 from astropy.time import Time, TimezoneInfo
-
+import datetime
 
 BROKER_URL = 'https://www.massey.ac.nz/~iabond/moa/'
 photometry = "https://www.massey.ac.nz/~iabond/moa/alert2019/fetchtxt.php?path=moa/ephot/"
@@ -47,6 +47,7 @@ class MOABroker(GenericBroker):
         #ingest the TOM db
         list_of_targets = []
         self.event_dictionnary = {}
+        time_now = Time(datetime.datetime.now()).jd
         for year in years:
             url_file_path = os.path.join(BROKER_URL+'alert'+str(year)+'/index.dat' )
             events = urllib.request.urlopen(url_file_path).readlines()
@@ -74,7 +75,7 @@ class MOABroker(GenericBroker):
     def find_and_ingest_photometry(self, targets):
 
         
-        
+        time_now = Time(datetime.datetime.now()).jd
         for target in targets:
             
             year = target.name.split('-')[1]
@@ -97,7 +98,7 @@ class MOABroker(GenericBroker):
                     tot_flux = float(self.event_dictionnary[target.name][2])+float(phot[1])
                     mag = float(self.event_dictionnary[target.name][1])-2.5*np.log10(tot_flux)
                     emag = float(phot[2])/tot_flux*2.5/np.log(10)
-                    if (np.isfinite(mag)) & (emag>0) & (float(phot[0])>2451544.50000): 
+                    if (np.isfinite(mag)) & (emag>0) & (emag<0.25) & (float(phot[0])>time_now-2*365.25): #Harvest the last 5 years 
                         jd.append(float(phot[0]))
                         mags.append(mag)
                         emags.append(emag)
@@ -117,7 +118,7 @@ class MOABroker(GenericBroker):
                     jd = Time(point[0], format='jd', scale='utc')
                     jd.to_datetime(timezone=TimezoneInfo())
                     data = {   'magnitude': point[1],
-                           'filter': 'MOA_R',
+                           'filter': 'R',
                            'error': point[2]
                        }
                     rd, created = ReducedDatum.objects.get_or_create(

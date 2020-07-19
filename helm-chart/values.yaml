@@ -8,14 +8,14 @@ gunicornTimeout: 300
 # CronJob: Fit Alive Events
 fitaliveevents:
   enabled: true
-  schedule: "* */4 * * *"
+  schedule: "* */12 * * *"
   resources: {}
 
 
 # CronJob: Fit Need Events
 fitneedevents:
   enabled: true
-  schedule: "* */12 * * *"
+  schedule: "* */4 * * *"
   resources: {}
 
 # CronJob: Run TAP
@@ -35,6 +35,12 @@ harvestgaia:
   enabled: true
   schedule: "0 12 * * *"
   resources: {}
+  
+# CronJob: Harvest MOA
+harvestmoa:
+  enabled: true
+  schedule: "0 */12 * * *"
+  resources: {}
 
 # CronJob: Add Galactic Coordinates
 addgalacticcoordinates:
@@ -48,6 +54,7 @@ opentargetstoomegausers:
   schedule: "0 */1 * * *"
   resources: {}
 
+
 replicaCount: 1
 
 image:
@@ -58,6 +65,22 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+# NGINX image (static files webserver)
+nginx:
+  image:
+    repository: "nginx"
+    tag: "1.16-alpine"
+    pullPolicy: IfNotPresent
+  resources: {}
+  securityContext:
+    capabilities:
+      drop:
+      - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 101
+    runAsGroup: 101
 
 serviceAccount:
   # Specifies whether a service account should be created

@@ -65,7 +65,7 @@ def fit_PSPL(photometry, emag_limit = None):
 def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None):
  
        # Filter orders
-       filters_order = ['I','ip','i_ZTF','r_ZTF','g_ZTF','gp','G']
+       filters_order = ['I','ip','i_ZTF','r_ZTF','R','g_ZTF','gp','G']
       
 
        filters = np.unique(photometry[:,-1])

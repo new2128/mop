@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mop.fullname" . }}
+  labels:
+{{ include "mop.labels" . | indent 4 }}
+data:
+  default.conf: |
+    # Global NGINX performance tuning
+    tcp_nopush on;
+    tcp_nodelay on;
+
+    server {
+        listen 8000;
+        server_name _;
+        root /usr/share/nginx/html;
+
+        # django application
+        location / {
+            proxy_pass http://127.0.0.1:8080;
+            proxy_http_version 1.1;
+            proxy_set_header Connection "";
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            # Clients can send any content up to 1024 MiB in size. NGINX will
+            # not buffer any content, but instead pass it straight through to
+            # the Gunicorn Python backend to handle.
+            proxy_request_buffering off;
+            client_max_body_size 1024m;
+        }
+
+        # static files
+        location /static/ {
+            alias /static/;
+        }
+
+        # media files
+        location /media/ {
+          alias /media/;
+        }
+
+        # Kubernetes health check (fixed response)
+        location = /healthz {
+          access_log off;
+          return 200 "Healthy!\n";
+        }
+    }
