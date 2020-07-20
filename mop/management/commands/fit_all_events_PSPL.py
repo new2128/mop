@@ -37,7 +37,7 @@ class Command(BaseCommand):
                  list_of_targets =  [i for i in events if year in i.name]
 
        for target in list_of_targets:
-
+           print(target.name)
            if 'Gaia' in target.name:
 
                gaia_mop.update_gaia_errors(target)
