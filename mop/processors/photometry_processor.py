@@ -4,7 +4,7 @@ import json
 from astropy import units
 from astropy.io import ascii
 from astropy.time import Time, TimezoneInfo
-from django.core.files.storage import default_storage
+
 
 from tom_dataproducts.data_processor import DataProcessor
 from tom_dataproducts.exceptions import InvalidFileFormatException
@@ -24,6 +24,8 @@ class PhotometryProcessor(DataProcessor):
 
     def _process_photometry_from_plaintext(self, data_product):
 
+        from django.core.files.storage import default_storage
+        
         photometry = []
 
         data_aws = default_storage.open(data_product.data.name, 'r')
