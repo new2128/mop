@@ -86,6 +86,8 @@ build it here and use it everywhere.
   value: {{ .Values.postgresql.service.port | quote }}
 - name: HOME
   value: "/tmp"
+- name: SECRET_KEY
+  value: {{ .Values.djangoSecretKey | quote }}
 - name: DJANGO_DEBUG
   value: {{ .Values.djangoDebug | toString | lower | title | quote }}
 - name: DJANGO_SECRET_KEY
