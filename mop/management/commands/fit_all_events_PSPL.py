@@ -101,4 +101,4 @@ class Command(BaseCommand):
                  'Blend_magnitude':np.around(mag_blend_fit,3),
                  'Baseline_magnitude':np.around(mag_baseline_fit,3),
                  'Fit_covariance':json.dumps(cov.tolist())}
-           target.save(extras = extras)
+               target.save(extras = extras)
