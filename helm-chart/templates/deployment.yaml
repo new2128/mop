@@ -80,7 +80,7 @@ spec:
               readonly: false
         {{- end }}
         - name: django-collectstatic
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
             - python
