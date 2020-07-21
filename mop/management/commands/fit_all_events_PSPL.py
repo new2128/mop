@@ -26,7 +26,7 @@ class Command(BaseCommand):
        if all_events == 'alive':
            list_of_targets = Target.objects.filter(targetextra__in=TargetExtra.objects.filter(key='Alive', value=True))
        if all_events == 'need':
-           list_of_targets = Target.objects.filter(targetextra__in=TargetExtra.objects.filter(key='t0', value=0.0))
+           list_of_targets = Target.objects.filter(targetextra__in=TargetExtra.objects.filter(key='t0', value=0)))
        if all_events[0] == '[':     
 	    
             years = all_events[1:-1].split(',')
@@ -101,4 +101,4 @@ class Command(BaseCommand):
                  'Blend_magnitude':np.around(mag_blend_fit,3),
                  'Baseline_magnitude':np.around(mag_baseline_fit,3),
                  'Fit_covariance':json.dumps(cov.tolist())}
-           target.save(extras = extras)
+               target.save(extras = extras)
