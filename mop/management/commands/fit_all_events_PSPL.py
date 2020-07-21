@@ -102,5 +102,5 @@ class Command(BaseCommand):
                          'Baseline_magnitude':np.around(mag_baseline_fit,3),
                          'Fit_covariance':json.dumps(cov.tolist())}
                        target.save(extras = extras)
-                   except:
+                except:
                        print('Can not fit this target')
