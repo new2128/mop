@@ -29,7 +29,7 @@ def mop_photometry(target):
     for datum in ReducedDatum.objects.filter(target=target, data_type=settings.DATA_PRODUCT_TYPES['photometry'][0]):
         values = json.loads(datum.value)
         try:
-            if  values['error']<0.25:
+           
                 photometry_data.setdefault(values['filter'], {})
                 photometry_data[values['filter']].setdefault('time', []).append(Time(datum.timestamp).jd-2450000)
                 photometry_data[values['filter']].setdefault('magnitude', []).append(values.get('magnitude'))
