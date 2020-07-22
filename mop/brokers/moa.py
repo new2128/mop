@@ -102,7 +102,8 @@ class MOABroker(GenericBroker):
                     time = float(phot[0])
                     mag = float(self.event_dictionnary[target.name][1])-2.5*np.log10(tot_flux)
                     emag = float(phot[2])/tot_flux*2.5/np.log(10)
-                    if (np.isfinite(mag)) & (emag>0) & (emag<1.0) & (float(phot[0])>time_now-2*365.25) & (time not in existing_time) : #Harvest the last 2 years 
+                    
+                    if (np.isfinite(mag)) & (emag>0) & (emag<1.0) & (time>time_now-2*365.25) & (time not in existing_time): #Harvest the last 2 years 
                         jd.append(time)
                         mags.append(mag)
                         emags.append(emag)
@@ -112,10 +113,6 @@ class MOABroker(GenericBroker):
 
 
             photometry = np.c_[jd,mags,emags]
-            
-
-
-
 
             for index,point in enumerate(photometry):
                 try:
