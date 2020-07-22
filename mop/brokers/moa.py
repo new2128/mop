@@ -121,7 +121,7 @@ class MOABroker(GenericBroker):
                            'filter': 'R',
                            'error': point[2]
                        }
-                    rd, created = ReducedDatum.objects.update_or_create(
+                    rd, created = ReducedDatum.objects.get_or_create(
                     timestamp=jd.to_datetime(timezone=TimezoneInfo()),
                     value=json.dumps(data),
                     source_name='MOA',
