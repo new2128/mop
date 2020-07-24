@@ -233,9 +233,8 @@ def build_and_submit_phot(target, obs_type):
           exposure_time_ip /= 2 # area ratio (kind of...)
 
        if telescope_class == '0.4m':
- 	  
- 	  #currently disabled this since we do not have 0.4m time
- 	  pass	
+          #currently disabled this since we do not have 0.4m time
+          pass
           #instrument_type = '0M4-SCICAM-SBIG'  
           #exposure_time_ip *= 4 # area ratio
 
