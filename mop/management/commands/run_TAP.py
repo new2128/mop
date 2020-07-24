@@ -114,7 +114,7 @@ class Command(BaseCommand):
                            obs_control.build_and_submit_priority_phot(event)
 
                         ### Spectroscopy
-                        if event.extra_fields['Spectras']<1:
+                        if (event.extra_fields['Spectras']<1) & (event.extra_fields['Observing_mode'] != 'No'):
                             obs_control.build_and_submit_regular_spectro(event) 
                         
                     except:
