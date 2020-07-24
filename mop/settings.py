@@ -273,15 +273,15 @@ TOM_ALERT_CLASSES = [
     'tom_alerts.brokers.lasair.LasairBroker',
     'tom_alerts.brokers.scout.ScoutBroker',
     'tom_alerts.brokers.tns.TNSBroker',
-    'tom_antares.antares.AntaresBroker',
     'tom_alerts.brokers.gaia.GaiaBroker',
+     #'tom_antares.antares.AntaresBroker',
 ]
 
 BROKER_CREDENTIALS = {
 
-'antares': {
-        'api_key': os.environ.get('ANTARES_KEY','dummy'),
-        'api_secret': os.environ.get('ANTARES_PASSWORD','dummy')
+#'antares': {
+#        'api_key': os.environ.get('ANTARES_KEY','dummy'),
+#        'api_secret': os.environ.get('ANTARES_PASSWORD','dummy')
     }
 }
 
