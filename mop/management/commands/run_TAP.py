@@ -85,7 +85,7 @@ class Command(BaseCommand):
 
                         event_in_the_Bulge = TAP.event_in_the_Bulge(event.ra, event.dec)
                         
-                        if (event_in_the_Bulge) & (event.extra_fields['Baseline_magnitude']>17):
+                        if (event_in_the_Bulge):# & (event.extra_fields['Baseline_magnitude']>17):
 
                                extras = {'Observing_mode':'No'}
                                event.save(extras = extras)
