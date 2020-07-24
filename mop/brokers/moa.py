@@ -78,6 +78,9 @@ class MOABroker(GenericBroker):
         time_now = Time(datetime.datetime.now()).jd
         for target in targets:
             
+            datasets = ReducedDatum.objects.filter(target=target)
+            existing_time = [Time(i.timestamp).jd for i in datasets if i.data_type == 'photometry']
+
             year = target.name.split('-')[1]
             event = self.event_dictionnary[target.name][0]
 
@@ -96,10 +99,12 @@ class MOABroker(GenericBroker):
                     
                     phot = [i for i in line if i!='']
                     tot_flux = float(self.event_dictionnary[target.name][2])+float(phot[1])
+                    
+                    time = float(phot[0])
                     mag = float(self.event_dictionnary[target.name][1])-2.5*np.log10(tot_flux)
                     emag = float(phot[2])/tot_flux*2.5/np.log(10)
-                    if (np.isfinite(mag)) & (emag>0) & (emag<0.25) & (float(phot[0])>time_now-2*365.25): #Harvest the last 5 years 
-                        jd.append(float(phot[0]))
+                    if (np.isfinite(mag)) & (emag>0) & (emag<1.0) & (time>time_now-2*365.25) & (time not in existing_time): #Harvest the last 2 years 
+                        jd.append(time)
                         mags.append(mag)
                         emags.append(emag)
                     
@@ -108,10 +113,6 @@ class MOABroker(GenericBroker):
 
 
             photometry = np.c_[jd,mags,emags]
-            photometry = photometry[photometry[:,0].argsort()[::-1],] #going backward to save time on ingestion
-
-
-
 
             for index,point in enumerate(photometry):
                 try:
@@ -135,7 +136,8 @@ class MOABroker(GenericBroker):
 
                     else:
                         # photometry already there (I hope!)
-                        break
+                        #break
+                        pass
                 except:
                         pass
 

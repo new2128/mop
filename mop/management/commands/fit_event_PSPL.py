@@ -43,15 +43,9 @@ class Command(BaseCommand):
 
        photometry = np.c_[time,phot]
        
-       if 'MOA' in target.name:
+    
 
-             emag_limit = 0.25
-
-       else:
-            
-             emag_limit = None
-
-       t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov,model = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry,emag_limit)
+       t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov,model = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry,)
 
        #Add photometry model
        data = {'lc_model_time': model.lightcurve_magnitude[:,0].tolist(),
