@@ -89,7 +89,7 @@ class Command(BaseCommand):
 
                                extras = {'Observing_mode':'No'}
                                event.save(extras = extras)
-                               return
+                               
          
                         else:
 
