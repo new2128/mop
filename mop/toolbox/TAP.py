@@ -18,9 +18,9 @@ def TAP_anomaly():
 
     pass
 
-def TAP_observing_mode(priority,priority_error):
+def TAP_observing_mode(priority,priority_error,mag_now,mag_baseline):
 
-   if priority-priority_error>10:
+   if (priority-priority_error>10) & (mag_baseline-mag_now<0.2) & (mag_now<19): #mag cut for high blended events
 
        return 'Priority'
 
