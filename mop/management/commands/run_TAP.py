@@ -101,8 +101,11 @@ class Command(BaseCommand):
                                extras = {'Observing_mode':'No'}
                                event.save(extras = extras)
                         
-
-                        new_observing_mode = TAP.TAP_observing_mode(planet_priority,planet_priority_error)
+                        # Priority mode
+                        
+                        mag_now = TAP.TAP_mag_now(event)
+                        mag_baseline = event.extra_fields['Baseline_magnitude']
+                        new_observing_mode = TAP.TAP_observing_mode(planet_priority,planet_priority_error,mag_now,mag_baseline)
 
                         if new_observing_mode:
                            tap_list.targets.add(event)
