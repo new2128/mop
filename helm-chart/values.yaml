@@ -8,20 +8,20 @@ gunicornTimeout: 300
 # CronJob: Fit Alive Events
 fitaliveevents:
   enabled: true
-  schedule: "* */12 * * *"
+  schedule: "0 */12 * * *"
   resources: {}
 
 
 # CronJob: Fit Need Events
 fitneedevents:
   enabled: true
-  schedule: "* */4 * * *"
+  schedule: "0 */4 * * *"
   resources: {}
 
 # CronJob: Run TAP
 runtap:
   enabled: true
-  schedule: "* */4 * * *"
+  schedule: "0 */4 * * *"
   resources: {}
 
 # CronJob: Harvest ZTF IPAC
@@ -39,19 +39,19 @@ harvestgaia:
 # CronJob: Harvest MOA
 harvestmoa:
   enabled: true
-  schedule: "0 */12 * * *"
+  schedule: "0 12 * * *"
   resources: {}
 
 # CronJob: Add Galactic Coordinates
 addgalacticcoordinates:
   enabled: true
-  schedule: "0 */1 * * *"
+  schedule: "0 */12 * * *"
   resources: {}
   
 # CronJob: Open targets to OMEGA users
 opentargetstoomegausers:
   enabled: true
-  schedule: "0 */1 * * *"
+  schedule: "0 */12 * * *"
   resources: {}
 
 
