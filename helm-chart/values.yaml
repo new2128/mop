@@ -72,7 +72,13 @@ nginx:
     repository: "nginx"
     tag: "1.16-alpine"
     pullPolicy: IfNotPresent
-  resources: {}
+  resources:
+    requests:
+      cpu: 10m
+      memory: 16Mi
+    limits:
+      cpu: 1000m
+      memory: 512Mi
   securityContext:
     capabilities:
       drop:

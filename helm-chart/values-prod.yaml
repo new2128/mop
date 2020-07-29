@@ -50,15 +50,6 @@ resources:
     cpu: 1000m
     memory: 1024Mi
 
-# NGINX (static files) CPU/Memory resource Requests/Limits
-resources:
-  requests:
-    cpu: 10m
-    memory: 16Mi
-  limits:
-    cpu: 1000m
-    memory: 512Mi
-
 # HTTP router configuration
 ingress:
   enabled: true
