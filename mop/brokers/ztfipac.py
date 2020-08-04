@@ -45,11 +45,14 @@ class ZTFIPACBroker(GenericBroker):
         
         list_of_events = [str(i)[6:-8] for i in ztf_ipac if '<td>ZTF' in str(i)]
         list_of_mars_links = [str(i).split('"')[1] for i in ztf_ipac if '<td><a href="https://mars.lco.global/' in str(i)]
+
+
         for index,event in enumerate(list_of_events):
+
             try:
                 MARS_candidates = requests.get(list_of_mars_links[index]+'&format=json').json()
                 cone_search = str(MARS_candidates['results'][0]['candidate']['ra'])+','+str(MARS_candidates['results'][0]['candidate']['dec'])+','+str(0.0001)
-                mars_form = MARSQueryForm({'cone':cone_search})
+                mars_form = MARSQueryForm({'cone':cone_search,'query_name':'Query ZTF IPAC : '+event, broker='MARS'})
                 mars_form.is_valid()
                 query = BrokerQuery.objects.create(
                                name='Query ZTF IPAC : '+event,
@@ -57,7 +60,8 @@ class ZTFIPACBroker(GenericBroker):
                                parameters=mars_form.serialize_parameters()
                                                )
                 alerts = mars.fetch_alerts(query.parameters_as_dict)
-                alerts = [*alerts]   
+                alerts = [*alerts]  
+
                 name = event
                 ra = np.median([alert['candidate']['ra'] for alert in alerts])
                 dec = np.median([alert['candidate']['dec'] for alert in alerts])
