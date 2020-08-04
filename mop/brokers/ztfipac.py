@@ -66,6 +66,8 @@ class ZTFIPACBroker(GenericBroker):
                 ra = np.median([alert['candidate']['ra'] for alert in alerts])
                 dec = np.median([alert['candidate']['dec'] for alert in alerts])
                 target, created = Target.objects.get_or_create(name=name,ra=ra,dec=dec,type='SIDEREAL',epoch=2000)
+                import pdb; pdb.set_trace()
+
                 if created:
 
                        target.save()
