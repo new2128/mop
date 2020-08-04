@@ -1,9 +1,8 @@
 // Kubernetes Automated Deployment Pipeline
 
 def config = [
-  slackBroadcastChannels: '#mop',
-  devDeploymentTimeout: "300",
-  prodDeploymentTimeout: "300",
+  devDeploymentTimeout: "180",
+  prodDeploymentTimeout: "180",
 ]
 
 helmPipeline(config)
