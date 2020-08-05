@@ -65,9 +65,13 @@ class ZTFIPACBroker(GenericBroker):
                 name = event
                 ra = np.median([alert['candidate']['ra'] for alert in alerts])
                 dec = np.median([alert['candidate']['dec'] for alert in alerts])
+                
                 try:
+                
                     target = Target.objects.get(name=name)
+                
                 except:
+                
                     target, created =  Target.objects.get_or_create(name=name,ra=ra,dec=dec,type='SIDEREAL',epoch=2000)
 
 
@@ -77,6 +81,8 @@ class ZTFIPACBroker(GenericBroker):
                    
 
                 filters = {1: 'g_ZTF', 2: 'r_ZTF', 3: 'i_ZTF'}
+                import pdb; pdb.set_trace()
+
                 for alert in alerts:
                    try:
                       
@@ -84,7 +90,7 @@ class ZTFIPACBroker(GenericBroker):
                           jd = Time(alert['candidate']['jd'], format='jd', scale='utc')
                           jd.to_datetime(timezone=TimezoneInfo())
                           
-                          if alert['candidate']['isdiffpos']:
+                          if alert['candidate']['isdiffpos'] == 't':
                               signe = 1
                           else:
                               signe = -1
