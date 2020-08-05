@@ -19,7 +19,7 @@ class Command(BaseCommand):
         parser.add_argument('--data_type', nargs='+', help='name of the data king to remove')
     
     def handle(self, *args, **options):
-        import pdb; pdb.set_trace()
+       import pdb; pdb.set_trace()
        name = options['targets_name']
        data_type = options['data_type']
        
