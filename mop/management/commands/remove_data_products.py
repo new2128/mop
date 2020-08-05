@@ -19,15 +19,20 @@ class Command(BaseCommand):
         parser.add_argument('--data_type', nargs='+', help='name of the data king to remove')
     
     def handle(self, *args, **options):
-       import pdb; pdb.set_trace()
+        import pdb; pdb.set_trace()
        name = options['targets_name']
        data_type = options['data_type']
        
+       events = Target.objects.filter()
        if name == 'all':
-           list_of_targets = Target.objects.filter()
+           list_of_targets = events
        else:
-           list_of_targets = Target.objects.filter(target__name__contains=name)
-             
+       
+           list_of_targets = []
+           for event in events:
+                if name[0] in i.name:
+                    list_of_targets.append(event)
+                                 
        for target in list_of_targets:
            
            ReducedDatum.objects.filter(target=target, data_type=settings.DATA_PRODUCT_TYPES[data_type][0]).delete()
