@@ -65,10 +65,13 @@ class ZTFIPACBroker(GenericBroker):
                 name = event
                 ra = np.median([alert['candidate']['ra'] for alert in alerts])
                 dec = np.median([alert['candidate']['dec'] for alert in alerts])
-                target, created = Target.objects.get_or_create(name=name,ra=ra,dec=dec,type='SIDEREAL',epoch=2000)
-                import pdb; pdb.set_trace()
+                try:
+                    target = Target.objects.get(name=name)
+                except:
+                    target, created =  Target.objects.get_or_create(name=name,ra=ra,dec=dec,type='SIDEREAL',epoch=2000)
 
-                if created:
+
+                    if created:
 
                        target.save()
                    
@@ -80,12 +83,24 @@ class ZTFIPACBroker(GenericBroker):
                        if all([key in alert['candidate'] for key in ['jd', 'magpsf', 'fid', 'sigmapsf']]):
                           jd = Time(alert['candidate']['jd'], format='jd', scale='utc')
                           jd.to_datetime(timezone=TimezoneInfo())
-                          value = {
-                                   'magnitude': alert['candidate']['magpsf'],
+                          
+                          if alerts[0]['candidate']['isdiffpos']:
+                              signe = 1
+                          else:
+                              signe = -1
+                              
+                          flux = 10**(-0.4*alerts[0]['candidate']['magnr'])+signe*10**(-0.4*alerts[0]['candidate']['magpsf'])
+                          eflux = ((10**(-0.4*alerts[0]['candidate']['magnr'])*alerts[0]['candidate']['sigmagnr'])**2+(signe*10**(-0.4*alerts[0]['candidate']['magpsf'])*alerts[0]['candidate']['sigmapsf'])**2)**0.5
+                          
+                          mag = -2.5*np.log10(flux)
+                          emag = eflux/flux
+                          
+                          value = {(
+                                   'magnitude': mag,
                                    'filter': filters[alert['candidate']['fid']],
-                                   'error': alert['candidate']['sigmapsf']
+                                   'error': emag
                                    }
-                          rd, created = ReducedDatum.objects.get_or_create(
+                          rd, created = ReducedDatum.objects.create_or_update(
                                         timestamp=jd.to_datetime(timezone=TimezoneInfo()),
                                         value=json.dumps(value),
                                         source_name='MARS',
