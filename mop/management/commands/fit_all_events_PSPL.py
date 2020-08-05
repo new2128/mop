@@ -75,8 +75,8 @@ class Command(BaseCommand):
                    'lc_model_magnitude': model.lightcurve_magnitude[:,1].tolist()
                             }
 
-                   rd, created = ReducedDatum.objects.get_or_create(
-                      timestamp=datetime.datetime.utcnow(),
+                   rd, created = ReducedDatum.objects.update_or_create(
+                      timestamp=datetime.datetime.strptime('2018-06-29 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f'),
                       value=json.dumps(data),
                       source_name='MOP',
                       source_location=target.name,
