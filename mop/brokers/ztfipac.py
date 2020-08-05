@@ -81,7 +81,7 @@ class ZTFIPACBroker(GenericBroker):
                    
 
                 filters = {1: 'g_ZTF', 2: 'r_ZTF', 3: 'i_ZTF'}
-                import pdb; pdb.set_trace()
+
 
                 for alert in alerts:
                    try:
@@ -95,7 +95,7 @@ class ZTFIPACBroker(GenericBroker):
                           else:
                               signe = -1
                               
-                          flux = 10**(-0.4*alert['candidate']['magnr'])+signe*10**(-0.4*alerts['candidate']['magpsf'])
+                          flux = 10**(-0.4*alert['candidate']['magnr'])+signe*10**(-0.4*alert['candidate']['magpsf'])
                           eflux = ((10**(-0.4*alert['candidate']['magnr'])*alert['candidate']['sigmagnr'])**2+(signe*10**(-0.4*alert['candidate']['magpsf'])*alert['candidate']['sigmapsf'])**2)**0.5
                           
                           mag = -2.5*np.log10(flux)
