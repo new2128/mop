@@ -24,7 +24,7 @@ class Command(BaseCommand):
        data_type = options['data_type']
        
        events = Target.objects.filter()
-       if name == 'all':
+       if name[0] == 'all':
            list_of_targets = events
        else:
        
