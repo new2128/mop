@@ -84,23 +84,23 @@ class ZTFIPACBroker(GenericBroker):
                           jd = Time(alert['candidate']['jd'], format='jd', scale='utc')
                           jd.to_datetime(timezone=TimezoneInfo())
                           
-                          if alerts[0]['candidate']['isdiffpos']:
+                          if alert['candidate']['isdiffpos']:
                               signe = 1
                           else:
                               signe = -1
                               
-                          flux = 10**(-0.4*alerts[0]['candidate']['magnr'])+signe*10**(-0.4*alerts[0]['candidate']['magpsf'])
-                          eflux = ((10**(-0.4*alerts[0]['candidate']['magnr'])*alerts[0]['candidate']['sigmagnr'])**2+(signe*10**(-0.4*alerts[0]['candidate']['magpsf'])*alerts[0]['candidate']['sigmapsf'])**2)**0.5
+                          flux = 10**(-0.4*alert['candidate']['magnr'])+signe*10**(-0.4*alerts['candidate']['magpsf'])
+                          eflux = ((10**(-0.4*alert['candidate']['magnr'])*alert['candidate']['sigmagnr'])**2+(signe*10**(-0.4*alert['candidate']['magpsf'])*alert['candidate']['sigmapsf'])**2)**0.5
                           
                           mag = -2.5*np.log10(flux)
                           emag = eflux/flux
                           
-                          value = {(
+                          value = {
                                    'magnitude': mag,
                                    'filter': filters[alert['candidate']['fid']],
                                    'error': emag
                                    }
-                          rd, created = ReducedDatum.objects.create_or_update(
+                          rd, created = ReducedDatum.objects.update_or_create(
                                         timestamp=jd.to_datetime(timezone=TimezoneInfo()),
                                         value=json.dumps(value),
                                         source_name='MARS',
