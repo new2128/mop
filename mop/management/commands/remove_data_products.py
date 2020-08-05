@@ -15,8 +15,8 @@ class Command(BaseCommand):
     help = 'Clean a data product kind for a list of targets'
     
     def add_arguments(self, parser):
-        parser.add_argument('targets_name', help='name of the events to clean')
-        parser.add_argument('data_type', help='name of the data king to remove')
+        parser.add_argument('--targets_name', nargs='+', help='name of the events to clean')
+        parser.add_argument('--data_type', nargs='+', help='name of the data king to remove')
     
     def handle(self, *args, **options):
     
