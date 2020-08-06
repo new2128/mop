@@ -85,7 +85,8 @@ class ZTFIPACBroker(GenericBroker):
 
                 for alert in alerts:
                    try:
-                      
+
+
                        if all([key in alert['candidate'] for key in ['jd', 'magpsf', 'fid', 'sigmapsf']]):
                           jd = Time(alert['candidate']['jd'], format='jd', scale='utc')
                           jd.to_datetime(timezone=TimezoneInfo())
@@ -106,15 +107,29 @@ class ZTFIPACBroker(GenericBroker):
                                    'filter': filters[alert['candidate']['fid']],
                                    'error': emag
                                    }
-                          rd, created = ReducedDatum.objects.update_or_create(
-                                        timestamp=jd.to_datetime(timezone=TimezoneInfo()),
-                                        value=json.dumps(value),
-                                        source_name='MARS',
-                                        source_location=alert['lco_id'],
-                                        data_type='photometry',
-                                        target=target)
-                          rd.save()
+                                   
+                           existing_point =   ReducedDatum.objects.filter(source_name='IRSA',timestamp=jd.to_datetime(timezone=TimezoneInfo()))
+
+                                                                            
+                          if existing_point.count() == 0:                                               
+                              rd, created = ReducedDatum.objects.get_or_create(
+                                            timestamp=jd.to_datetime(timezone=TimezoneInfo()),
+                                            value=json.dumps(value),
+                                            source_name='IRSA',
+                                            data_type='photometry',
+                                            target=target)
+                              rd.save()
+                          else:
+                              rd, created = ReducedDatum.objects.update_or_create(
+                                            timestamp=existing_point[0].timestamp,
+                                            value=existing_point[0].value,
+                                            source_name='IRSA',
+                                            data_type='photometry',
+                                            target=target,
+                                            defaults={'value':json.dumps(value)})
+                              rd.save()
                    except:
+
                           pass
             except:
                   pass

@@ -75,6 +75,13 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None):
            mask = np.where(filters==fil)[0]
            if len(mask)!= 0:
                 order += mask.tolist() 
+       
+       for fil in filters:
+            
+           if fil not in filters_order:
+                mask = np.where(filters==fil)[0]
+                if len(mask)!= 0:
+                    order += mask.tolist() 
        filters = filters[order]
 
 

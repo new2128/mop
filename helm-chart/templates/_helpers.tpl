@@ -102,6 +102,10 @@ build it here and use it everywhere.
   value: {{ .Values.lcoProposalId | quote }}
 - name: LCO_USERNAME
   value: {{ .Values.lcoUsername | quote }}
+- name: IRSA_USERNAME
+  value: {{ .Values.irsaUsername | quote }}
+- name: IRSA_PASSWORD
+  value: {{ .Values.irsaPassword | quote }} 
 - name: AWS_ACCESS_KEY_ID
   value: {{ .Values.awsAccessKeyId | quote }}
 - name: AWS_SECRET_ACCESS_KEY
