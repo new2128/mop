@@ -108,7 +108,7 @@ class ZTFIPACBroker(GenericBroker):
                                    'error': emag
                                    }
                                    
-                           existing_point =   ReducedDatum.objects.filter(source_name='IRSA',timestamp=jd.to_datetime(timezone=TimezoneInfo()))
+                          existing_point =   ReducedDatum.objects.filter(source_name='IRSA',timestamp=jd.to_datetime(timezone=TimezoneInfo()))
 
                                                                             
                           if existing_point.count() == 0:                                               
