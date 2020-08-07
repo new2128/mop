@@ -49,20 +49,38 @@ class Command(BaseCommand):
            t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov,model = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry,)
 
            #Add photometry model
-           data = {'lc_model_time': model.lightcurve_magnitude[:,0].tolist(),
-                   'lc_model_magnitude': model.lightcurve_magnitude[:,1].tolist()
-                            }
-
-           rd, created = ReducedDatum.objects.update_or_create(
-                      timestamp=datetime.datetime.strptime('2018-06-29 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f'),
-                      value=json.dumps(data),
-                      source_name='MOP',
-                      source_location=target.name,
-                      data_type='lc_model',
-                      target=target)
            
-           if created:
+           model_time = datetime.datetime.strptime('2018-06-29 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
+           data = {'lc_model_time': model.lightcurve_magnitude[:,0].tolist(),
+           'lc_model_magnitude': model.lightcurve_magnitude[:,1].tolist()
+                    }
+           existing_model =   ReducedDatum.objects.filter(source_name='MOP',data_type='lc_model',
+                                                          timestamp=model_time)
+
+                                                            
+           if existing_model.count() == 0:     
+                rd, created = ReducedDatum.objects.get_or_create(
+                                                                    timestamp=model_time,
+                                                                    value=json.dumps(data),
+                                                                    source_name='MOP',
+                                                                    source_location=target.name,
+                                                                    data_type='lc_model',
+                                                                    target=target)                  
+
                 rd.save()
+
+           else:
+                rd, created = ReducedDatum.objects.update_or_create(
+                                                                    timestamp=existing_model[0].timestamp,
+                                                                    value=existing_model[0].value,
+                                                                    source_name='MOP',
+                                                                    source_location=target.name,
+                                                                    data_type='lc_model',
+                                                                    target=target,
+                                                                    defaults={'value':jjson.dumps(data)})                  
+
+                rd.save()
+                  
 
            time_now = Time(datetime.datetime.now()).jd
            how_many_tE = (time_now-t0_fit)/tE_fit
