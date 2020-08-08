@@ -61,8 +61,6 @@ class Command(BaseCommand):
             content = list(csv.reader(response.content.decode('utf-8').splitlines(), delimiter=','))
             light = np.array(content)
 
-            if target.name =='ZTF20aawpktr':
-                import pdb; pdb.set_trace()
 
             if len(light)>1:
                 #mjd, mag, magerr, filter
