@@ -101,7 +101,7 @@ class Command(BaseCommand):
                                                                             source_location=target.name,
                                                                             data_type='lc_model',
                                                                             target=target,
-                                                                            defaults={'value':jjson.dumps(data)})                  
+                                                                            defaults={'value':json.dumps(data)})                  
 
                         rd.save()
                   
@@ -128,5 +128,5 @@ class Command(BaseCommand):
                    target.save(extras = extras)
            except:
                pass    
->>>>>>> dev
+
 
