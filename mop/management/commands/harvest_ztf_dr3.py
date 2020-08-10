@@ -53,60 +53,64 @@ class Command(BaseCommand):
             dec =   target.dec
             radius = 0.0001 #arsec
 
-
-            url = 'https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves?POS=CIRCLE '+str(ra)+' '+str(dec)+' '+str(radius)+'&FORMAT=CSV'
-            response = requests.get(url,  timeout=20,auth=(username,password))
-
-
-            content = list(csv.reader(response.content.decode('utf-8').splitlines(), delimiter=','))
-            light = np.array(content)
+            try:
+                url = 'https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves?POS=CIRCLE '+str(ra)+' '+str(dec)+' '+str(radius)+'&FORMAT=CSV'
+                response = requests.get(url,  timeout=20,auth=(username,password))
 
 
-            if len(light)>1:
-                #mjd, mag, magerr, filter
-                lightcurve = np.c_[light[1:,3],light[1:,4],light[1:,5],light[1:,7]]
+                content = list(csv.reader(response.content.decode('utf-8').splitlines(), delimiter=','))
+                light = np.array(content)
 
-                for line in lightcurve:
-                       try:
-                              jd = Time(float(line[0])+2400000.5, format='jd', scale='utc')
 
-                         
-                              
-                              mag = float(line[1])
-                              emag = float(line[2])
+                if len(light)>1:
+                    #mjd, mag, magerr, filter
+                    lightcurve = np.c_[light[1:,3],light[1:,4],light[1:,5],light[1:,7]]
 
-                              filt = filters[line[-1]]
-                              value = {
-                                       'magnitude': mag,
-                                       'filter': filt,
-                                       'error': emag
-                                       }
-                                       
-                              existing_point =   ReducedDatum.objects.filter(source_name='IRSA',timestamp=jd.to_datetime(timezone=TimezoneInfo()))
+                    for line in lightcurve:
+                           try:
+                                  jd = Time(float(line[0])+2400000.5, format='jd', scale='utc')
 
-                                                                            
-                              if existing_point.count() == 0:                                               
-                                  rd, created = ReducedDatum.objects.get_or_create(
-                                                timestamp=jd.to_datetime(timezone=TimezoneInfo()),
-                                                value=json.dumps(value),
-                                                source_name='IRSA',
-                                                data_type='photometry',
-                                                target=target)
-                                  rd.save()
-                              else:
-                                  rd, created = ReducedDatum.objects.update_or_create(
-                                                timestamp=existing_point[0].timestamp,
-                                                value=existing_point[0].value,
-                                                source_name='IRSA',
-                                                data_type='photometry',
-                                                target=target,
-                                                defaults={'value':json.dumps(value)})
-                                  rd.save()
+                             
                                   
-                       except:
+                                  mag = float(line[1])
+                                  emag = float(line[2])
 
-                              pass
+                                  filt = filters[line[-1]]
+                                  value = {
+                                           'magnitude': mag,
+                                           'filter': filt,
+                                           'error': emag
+                                           }
+                                           
+                                  existing_point =   ReducedDatum.objects.filter(source_name='IRSA',timestamp=jd.to_datetime(timezone=TimezoneInfo()))
 
+                                                                                
+                                  if existing_point.count() == 0:                                               
+                                      rd, created = ReducedDatum.objects.get_or_create(
+                                                    timestamp=jd.to_datetime(timezone=TimezoneInfo()),
+                                                    value=json.dumps(value),
+                                                    source_name='IRSA',
+                                                    data_type='photometry',
+                                                    target=target)
+                                      rd.save()
+                                  else:
+                                      rd, created = ReducedDatum.objects.update_or_create(
+                                                    timestamp=existing_point[0].timestamp,
+                                                    value=existing_point[0].value,
+                                                    source_name='IRSA',
+                                                    data_type='photometry',
+                                                    target=target,
+                                                    defaults={'value':json.dumps(value)})
+                                      rd.save()
+                                      
+                           except:
+
+                                  pass
+                                 
+                 
+            except:
+                print('Can not connect to IRSA')
+                pass
 
 
 
