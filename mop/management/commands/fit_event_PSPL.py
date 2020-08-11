@@ -55,7 +55,7 @@ class Command(BaseCommand):
            'lc_model_magnitude': model.lightcurve_magnitude[:,1].tolist()
                     }
            existing_model =   ReducedDatum.objects.filter(source_name='MOP',data_type='lc_model',
-                                                          timestamp=model_time)
+                                                          timestamp=model_time,source_location=target.name)
 
                                                             
            if existing_model.count() == 0:     
