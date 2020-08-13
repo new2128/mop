@@ -7,6 +7,7 @@ from mop.brokers import gaia as gaia_mop
 import json
 import numpy as np
 import datetime
+import random
 
 class Command(BaseCommand):
 
@@ -37,6 +38,10 @@ class Command(BaseCommand):
             for year in years:
  
                  list_of_targets =  [i for i in events if year in i.name]
+
+       list_of_targets = list(list_of_targets)
+       random.shuffle(list_of_targets)
+
 
        for target in list_of_targets:
            

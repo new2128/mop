@@ -8,7 +8,7 @@ gunicornTimeout: 300
 # CronJob: Fit Alive Events
 fitaliveevents:
   enabled: true
-  schedule: "0 */12 * * *"
+  schedule: "0 */4 * * *"
   resources: {}
 
 
