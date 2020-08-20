@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from tom_dataproducts.models import ReducedDatum
-from tom_targets.models import Target
+from tom_targets.models import Target,TargetExtra
 from astropy.time import Time, TimezoneInfo
 from mop.toolbox import fittools
 from mop.brokers import gaia as gaia_mop
