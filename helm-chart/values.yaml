@@ -29,6 +29,12 @@ harvestztfipac:
   enabled: true
   schedule: "0 8 * * *"
   resources: {}
+  
+# CronJob: Harvest ZTF DR3
+harvestztfdr3:
+  enabled: true
+  schedule: "0 12 * * *"
+  resources: {}  
 
 # CronJob: Harvest GAIA
 harvestgaia:

@@ -13,6 +13,7 @@ import datetime
 import numpy as np
 import requests
 import csv
+import random
 
 LOGIN_URL = "https://irsa.ipac.caltech.edu/account/signon/login.do"
 
@@ -47,6 +48,9 @@ class Command(BaseCommand):
  
                  list_of_targets =  [i for i in events if year in i.name]
 
+       list_of_targets = list(list_of_targets)
+       random.shuffle(list_of_targets)
+       
        for target in list_of_targets:
        
             ra =    target.ra	
