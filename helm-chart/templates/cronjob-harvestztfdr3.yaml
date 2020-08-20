@@ -1,29 +1,29 @@
-{{- if .Values.harvestztfd3.enabled -}}
+{{- if .Values.harvestztfdr3.enabled -}}
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ include "mop.fullname" . }}-harvestztfd3
+  name: {{ include "mop.fullname" . }}-harvestztfdr3
   labels:
 {{ include "mop.labels" . | indent 4 }}
-    app.kubernetes.io/component: "harvestztfd3"
+    app.kubernetes.io/component: "harvestztfdr3"
 spec:
   concurrencyPolicy: "Forbid"
-  failedJobsHistoryLimit: {{ default 1 .Values.harvestztfd3.failedJobsHistoryLimit }}
-  successfulJobsHistoryLimit: {{ default 3 .Values.harvestztfd3.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ default 1 .Values.harvestztfdr3.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ default 3 .Values.harvestztfdr3.successfulJobsHistoryLimit }}
   startingDeadlineSeconds: 120
-  schedule: "{{ .Values.harvestztfd3.schedule }}"
+  schedule: "{{ .Values.harvestztfdr3.schedule }}"
   jobTemplate:
     metadata:
       labels:
         {{- include "mop.labels" . | nindent 8 }}
-        app.kubernetes.io/component: "harvestztfd3"
+        app.kubernetes.io/component: "harvestztfdr3"
     spec:
       activeDeadlineSeconds: 18000
       template:
         metadata:
           labels:
             {{- include "mop.labels" . | nindent 12 }}
-            app.kubernetes.io/component: "harvestztfd3"
+            app.kubernetes.io/component: "harvestztfdr3"
         spec:
           restartPolicy: Never
           containers:
@@ -41,7 +41,7 @@ spec:
               env:
                 {{- include "mop.backendEnv" . | nindent 16 }}
               resources:
-                {{- toYaml .Values.harvestztfd3.resources | nindent 16 }}
+                {{- toYaml .Values.harvestztfdr3.resources | nindent 16 }}
               volumeMounts:
                 - name: tmp
                   mountPath: /tmp
