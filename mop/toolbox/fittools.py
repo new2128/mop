@@ -16,7 +16,7 @@ def flux_to_mag(flux):
         magnitude = ZP_pyLIMA -2.5*np.log10(flux)
         return magnitude
 
-def fit_PSPL(photometry, emag_limit = None):
+def fit_PSPL(photometry, emag_limit = None, cores = None):
 
        current_event = event.Event()
        current_event.name = 'MOP_to_fit'
@@ -44,6 +44,20 @@ def fit_PSPL(photometry, emag_limit = None):
        Model = microlmodels.create_model('PSPL', current_event, parallax=['None', 0])
        Model.parameters_boundaries[0] = [Model.parameters_boundaries[0][0],Model.parameters_boundaries[0][-1]+500]
        Model.parameters_boundaries[1] = [0,2]
+       
+       if cores:
+       
+           import multiprocessing
+           pool = multiprocessing.Pool(processes=cores)
+           
+           current_event.fit(Model_parallax, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit',computational_pool = pool)
+           
+           pool.close()
+           
+       else:
+       
+           current_event.fit(Model_parallax, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit')
+           
        current_event.fit(Model, 'DE',DE_population_size=20)
 
        t0_fit =  current_event.fits[-1].fit_results[0]
@@ -62,7 +76,7 @@ def fit_PSPL(photometry, emag_limit = None):
 
        return [t0_fit,u0_fit,tE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,chi2_fit]
 
-def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None):
+def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
  
        # Filter orders
        filters_order = ['I','ip','i_ZTF','r_ZTF','R','g_ZTF','gp','G']
@@ -84,9 +98,9 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None):
                     order += mask.tolist() 
        filters = filters[order]
 
+       
 
-
-       t0_fit,u0_fit,tE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,chi2_fit = fit_PSPL(photometry, emag_limit = None)
+       t0_fit,u0_fit,tE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,chi2_fit = fit_PSPL(photometry, emag_limit = None, cores)
 
        current_event = event.Event()
        current_event.name = 'MOP_to_fit'
@@ -123,7 +137,18 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None):
        #Model_parallax.parameters_boundaries[3] = [-1,1]
        #Model_parallax.parameters_boundaries[4] = [-1,1]
        Model_parallax.parameters_guess = [ t0_fit,u0_fit,tE_fit,0,0]
-       current_event.fit(Model_parallax, 'DE',DE_population_size=20,flux_estimation_MCMC = 'polyfit')
+       if cores:
+       
+           import multiprocessing
+           pool = multiprocessing.Pool(processes=cores)
+           
+           current_event.fit(Model_parallax, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit',computational_pool = pool)
+           
+           pool.close()
+           
+       else:
+       
+           current_event.fit(Model_parallax, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit')
 
        #if (chi2_fit-current_event.fits[-1].fit_results[-1])/current_event.fits[-1].fit_results[-1]<0.1:
        
