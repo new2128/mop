@@ -100,7 +100,7 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
 
        
 
-       t0_fit,u0_fit,tE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,chi2_fit = fit_PSPL(photometry, emag_limit = None, cores)
+       t0_fit,u0_fit,tE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,chi2_fit = fit_PSPL(photometry, emag_limit = None, cores = cores)
 
        current_event = event.Event()
        current_event.name = 'MOP_to_fit'
