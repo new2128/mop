@@ -59,7 +59,7 @@ fitaliveevents:
       memory: 256Mi
     limits:
       cpu: 1000m
-      memory: 1024Mi
+      memory: 3072Mi
 
 # CronJob: Fit Need Events
 fitneedevents:
