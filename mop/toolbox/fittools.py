@@ -48,15 +48,13 @@ def fit_PSPL(photometry, emag_limit = None, cores = None):
        if cores:
        
            import multiprocessing
-           pool = multiprocessing.Pool(processes=cores)
-           
-           current_event.fit(Model_parallax, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit',computational_pool = pool)
-           
-           pool.close()
-           
+           with Pool(processes=cores) as pool:
+                current_event.fit(Model, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit',computational_pool = pool)
+                     
        else:
        
            current_event.fit(Model_parallax, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit')
+       
            
        current_event.fit(Model, 'DE',DE_population_size=20)
 
@@ -140,12 +138,9 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
        if cores:
        
            import multiprocessing
-           pool = multiprocessing.Pool(processes=cores)
-           
-           current_event.fit(Model_parallax, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit',computational_pool = pool)
-           
-           pool.close()
-           
+           with Pool(processes=cores) as pool:
+                current_event.fit(Model_parallax, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit',computational_pool = pool)
+                     
        else:
        
            current_event.fit(Model_parallax, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit')
