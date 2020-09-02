@@ -8,7 +8,12 @@ import json
 import numpy as np
 import datetime
 import random
-import datettime
+
+import datetime
+
+import os
+
+
 class Command(BaseCommand):
 
     help = 'Fit an event with PSPL and parallax, then ingest fit parameters in the db'
@@ -16,6 +21,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
 
         parser.add_argument('events_to_fit', help='all, alive, need or [years]')
+        parser.add_argument('--cores', help='Number of workers to use', default=os.cpu_count(), type=int)
 
     
     def handle(self, *args, **options):
@@ -57,6 +63,9 @@ class Command(BaseCommand):
                    if 'Gaia' in target.name:
 
                        gaia_mop.update_gaia_errors(target)
+              
+                   #Add photometry model
+
                    
                    if 'Microlensing' not in target.extra_fields['Classification']:
                        alive = False
@@ -83,7 +92,7 @@ class Command(BaseCommand):
 
                        photometry = np.c_[time,phot]
 
-                       t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov,model = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry,cores = 8)
+                        t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov,model = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry, cores = options['cores'])
                        
                        #Add photometry model
                        
