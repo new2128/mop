@@ -317,7 +317,9 @@ EXTRA_FIELDS = [{'name':'Alive','type':'boolean', 'default':True},
                 {'name':'Baseline_magnitude','type':'number','default':0},
                 {'name':'Fit_covariance','type':'string','default':''},
                 {'name':'TAP_priority','type':'number','default':''},
-                {'name':'Spectras','type':'number','default':0}]
+                {'name':'Spectras','type':'number','default':0},
+                {'name':'Last_Fit','type':'number','default':2446756.50000}]
+                {'name':'Current_Fit','type':'number','default':0}]
 
 TARGET_PERMISSIONS_ONLY=True
 

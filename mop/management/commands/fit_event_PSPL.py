@@ -22,6 +22,10 @@ class Command(BaseCommand):
 
        target, created = Target.objects.get_or_create(name= options['target_name'])
        try:	
+           current_fit = Time(datetime.datetime.utcnow()).jd
+           extras = {'Current_Fit':current_fit}
+           target.save(extras = extras)
+           
            if 'Gaia' in target.name:
 
                gaia_mop.update_gaia_errors(target)
@@ -94,13 +98,14 @@ class Command(BaseCommand):
      
               alive = True
            
-
+           last_fit = Time(datetime.datetime.utcnow()).jd
            extras = {'Alive':alive, 't0':np.around(t0_fit,3),'u0':np.around(np.max([10**-5,u0_fit]),5),'tE':np.around(tE_fit,3),
                      'piEN':np.around(piEN_fit,5),'piEE':np.around(piEE_fit,5),
                      'Source_magnitude':np.around(mag_source_fit,3),
                      'Blend_magnitude':np.around(mag_blend_fit,3),
                      'Baseline_magnitude':np.around(mag_baseline_fit,3),
-                     'Fit_covariance':json.dumps(cov.tolist())}
+                     'Fit_covariance':json.dumps(cov.tolist()),
+                     'Last_Fit':last_fit}
            target.save(extras = extras)
        except:
            pass

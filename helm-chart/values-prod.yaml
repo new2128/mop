@@ -69,22 +69,22 @@ fitaliveevents:
   enabled: true
   resources:
     requests:
-      cpu: 10m
-      memory: 256Mi
+      cpu: 3000m
+      memory: 2048Mi
     limits:
-      cpu: 1000m
-      memory: 1024Mi
+      cpu: 3500m
+      memory: 4096Mi
 
 # CronJob: Fit Need Events
 fitneedevents:
   enabled: true
   resources:
     requests:
-      cpu: 10m
-      memory: 256Mi
+      cpu: 3000m
+      memory: 2048Mi
     limits:
-      cpu: 1000m
-      memory: 1024Mi
+      cpu: 3500m
+      memory: 4096Mi
 # CronJob: Run TAP
 runtap:
   enabled: true
