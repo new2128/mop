@@ -8,6 +8,7 @@ import json
 import numpy as np
 import datetime
 import random
+import os
 
 class Command(BaseCommand):
 
@@ -16,6 +17,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
 
         parser.add_argument('events_to_fit', help='all, alive, need or [years]')
+        parser.add_argument('--cores', help='Number of workers to use', default=os.cpu_count(), type=int)
 
     
     def handle(self, *args, **options):
@@ -75,7 +77,7 @@ class Command(BaseCommand):
 
                    photometry = np.c_[time,phot]
 
-                   t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov,model = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry,cores = 8)
+                   t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov,model = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry, cores = options['cores'])
                    
                    #Add photometry model
                    
