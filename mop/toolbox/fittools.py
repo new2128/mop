@@ -48,7 +48,7 @@ def fit_PSPL(photometry, emag_limit = None, cores = None):
        if cores:
        
            import multiprocessing
-           with Pool(processes=cores) as pool:
+           with multiprocessing.Pool(processes=cores) as pool:
                 current_event.fit(Model, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit',computational_pool = pool)
                      
        else:
@@ -138,7 +138,7 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
        if cores:
        
            import multiprocessing
-           with Pool(processes=cores) as pool:
+           with multiprocessing.Pool(processes=cores) as pool:
                 current_event.fit(Model_parallax, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit',computational_pool = pool)
                      
        else:
