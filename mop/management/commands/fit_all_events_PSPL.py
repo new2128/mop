@@ -52,11 +52,6 @@ class Command(BaseCommand):
 
        for target in list_of_targets:
            # if the previous job has not been started by another worker yet, claim it
-           if target.extra_fields['Current_fit']>= target.extra_fields['Last_fit']
-               
-               current_fit = Time(datetime.datetime.utcnow()).jd
-               extras = {'Current_Fit':current_fit}
-               target.save(extras = extras)
                
                print('Working on'+target.name)
                try:    
@@ -92,7 +87,7 @@ class Command(BaseCommand):
 
                        photometry = np.c_[time,phot]
 
-                        t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov,model = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry, cores = options['cores'])
+                       t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov,model = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry, cores = options['cores'])
                        
                        #Add photometry model
                        
@@ -151,13 +146,8 @@ class Command(BaseCommand):
                          'Fit_covariance':json.dumps(cov.tolist()),
                          'Last_Fit':last_fit}
                        target.save(extras = extras)
-                       # exit with non-zero status to tell kubernetes we are not done processing
-                       # all fits in the entire dataset yet
-                       sys.exit(1)
+                      
                except:
                    pass    
 
-# If we get here, there were no jobs which need to be run. We can inform
-# Kubernetes that all jobs have been finished.
-# https://kubernetes.io/docs/concepts/workloads/controllers/job/#parallel-jobs
-sys.exit(0)
+

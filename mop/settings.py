@@ -318,8 +318,8 @@ EXTRA_FIELDS = [{'name':'Alive','type':'boolean', 'default':True},
                 {'name':'Fit_covariance','type':'string','default':''},
                 {'name':'TAP_priority','type':'number','default':''},
                 {'name':'Spectras','type':'number','default':0},
-                {'name':'Last_Fit','type':'number','default':2446756.50000}]
-                {'name':'Current_Fit','type':'number','default':0}]
+                {'name':'Last_fit','type':'number','default':2446756.50000}]
+       
 
 TARGET_PERMISSIONS_ONLY=True
 
