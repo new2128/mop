@@ -56,13 +56,8 @@ fitaliveevents:
   cores: 4
   resources:
     requests:
-<<<<<<< HEAD
-      cpu: 3000m
-      memory: 2048Mi
-=======
       cpu: 3500m
       memory: 1024Mi
->>>>>>> 27f7316c3032a990206ecd78a565fdfb850de1d2
     limits:
       cpu: 3500m
       memory: 4096Mi
@@ -73,13 +68,8 @@ fitneedevents:
   cores: 2
   resources:
     requests:
-<<<<<<< HEAD
-      cpu: 3000m
-      memory: 2048Mi
-=======
       cpu: 2
       memory: 512Mi
->>>>>>> 27f7316c3032a990206ecd78a565fdfb850de1d2
     limits:
       cpu: 3500m
       memory: 4096Mi
