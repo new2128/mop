@@ -37,6 +37,9 @@ spec:
                 - manage.py
                 - fit_all_events_PSPL
                 - alive
+                {{- with .Values.fitaliveevents.cores }}
+                - --cores={{ . }}
+                {{- end }}
               env:
                 {{- include "mop.backendEnv" . | nindent 16 }}
               resources:

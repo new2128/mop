@@ -53,23 +53,25 @@ ingress:
 # CronJob: Fit Alive Events
 fitaliveevents:
   enabled: true
+  cores: 4
   resources:
     requests:
-      cpu: 2
-      memory: 2048Mi
+      cpu: 3500m
+      memory: 1024Mi
     limits:
-      cpu: 4
+      cpu: 3500m
       memory: 4096Mi
 
 # CronJob: Fit Need Events
 fitneedevents:
   enabled: true
+  cores: 2
   resources:
     requests:
       cpu: 2
-      memory: 2048Mi
+      memory: 512Mi
     limits:
-      cpu: 4
+      cpu: 3500m
       memory: 4096Mi
 
 # CronJob: Run TAP
