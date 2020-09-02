@@ -35,8 +35,7 @@ spec:
               command:
                 - python
                 - manage.py
-                - fit_all_events_PSPL
-                - need
+                - fit_need_events_PSPL
                 {{- with .Values.fitneedevents.cores }}
                 - --cores={{ . }}
                 {{- end }}
