@@ -125,24 +125,19 @@ class Command(BaseCommand):
         parser.add_argument('--run-every', help='Run each Fit every N hours', default=4, type=int)
 
     def handle(self, *args, **options):
-
-
-        #Adding Last_fit if dos not exist
+        # The TOM Toolkit project does not automatically create key/value pairs
+        # in the "Extra Fields" during a database migration. We use this silly
+        # method to automatically add this field to any Target objects which were
+        # created before this field was added to the database.
+        # Adding Last_fit if dos not exist
         list_of_targets = Target.objects.filter()
-        
         for target in list_of_targets:
-
-
             try:
                 last_fit = target.extra_fields['Last_fit']
-                
             except:
                 last_fit = 2446756.50000
-
-
                 extras = {'Last_fit':last_fit}
                 target.save(extras = extras)
-
 
         # Run until all objects which need processing have been processed
         while True:
