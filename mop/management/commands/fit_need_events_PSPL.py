@@ -176,13 +176,14 @@ class Command(BaseCommand):
                 # Retrieve the first element which meets the condition
                 element = queryset.first()
 
-                # Claim the element for this worker (mark the fit as "RUNNING" state) by
-                # setting the Last_fit timestamp. This condition has the beneficial side
-                # effect such that if a fit crashes, it won't be re-run (retried) for
-                # another four hours. This limits the impact of broken code on the cluster.
-                last_fit = Time(datetime.datetime.utcnow()).jd
-                extras = {'Last_fit':last_fit}
-                element.save(extras = extras)
+                # Element was found. Claim the element for this worker (mark the fit as in
+                # the "RUNNING" state) by setting the Last_fit timestamp. This method has
+                # the beneficial side effect such that if a fit crashes, it won't be re-run
+                # (retried) for another N hours. This limits the impact of broken code on the cluster.
+                if element is not None:
+                    last_fit = Time(datetime.datetime.utcnow()).jd
+                    extras = {'Last_fit':last_fit}
+                    element.save(extras = extras)
 
             # If there are no more objects left to process, then the job is finished.
             # Inform Kubernetes of this fact by exiting successfully.
