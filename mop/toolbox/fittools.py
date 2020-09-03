@@ -56,7 +56,7 @@ def fit_PSPL(photometry, emag_limit = None, cores = None):
            current_event.fit(Model_parallax, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit')
        
            
-       current_event.fit(Model, 'DE',DE_population_size=20)
+
 
        t0_fit =  current_event.fits[-1].fit_results[0]
        u0_fit =  current_event.fits[-1].fit_results[1]
