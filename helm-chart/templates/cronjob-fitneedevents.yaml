@@ -43,6 +43,9 @@ spec:
                 {{- with .Values.fitneedevents.cores }}
                 - --cores={{ . }}
                 {{- end }}
+                {{- with .Values.fitneedevents.runEvery }}
+                - --run-every={{ . }}
+                {{- end }}
               env:
                 {{- include "mop.backendEnv" . | nindent 16 }}
               resources:
