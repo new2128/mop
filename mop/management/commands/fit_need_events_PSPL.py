@@ -126,6 +126,24 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
+
+        #Adding Last_fit if dos not exist
+        list_of_targets = Target.objects.filter()
+        
+        for target in list_of_targets:
+
+
+            try:
+                last_fit = target.extra_fields['Last_fit']
+                
+            except:
+                last_fit = 2446756.50000
+
+
+                extras = {'Last_fit':last_fit}
+                target.save(extras = extras)
+
+
         # Run until all objects which need processing have been processed
         while True:
             # One instance of our database model to process (if found)
