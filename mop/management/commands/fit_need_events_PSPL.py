@@ -17,7 +17,7 @@ import sys
 import os
 
 
-def run_fit(target):
+def run_fit(target,cores):
     print(f'Working on {target.name}')
 
     try:
@@ -52,7 +52,7 @@ def run_fit(target):
 
            photometry = np.c_[time,phot]
 
-           t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov,model = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry, cores = options['cores'])
+           t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,cov,model = fittools.fit_PSPL_parallax(target.ra, target.dec, photometry, cores = cores)
 
            # Add photometry model
 
@@ -144,11 +144,16 @@ class Command(BaseCommand):
             # collisions by two workers. Very unlikely, but we're good software engineers
             # and will protect against that.
             with transaction.atomic():
+            
                 four_hours_ago = Time(datetime.datetime.utcnow() - datetime.timedelta(hours=4)).jd
+
 
                 # https://docs.djangoproject.com/en/3.0/ref/models/querysets/#select-for-update
                 queryset = Target.objects.select_for_update(skip_locked=True)
-                queryset = queryset.filter(targetextra__in=Q(TargetExtra.objects.filter(key='last_fit', value__lte=fours_hours_ago) & TargetExtra.objects.filter(key='Alive', value=True)))
+                queryset = Target.objects.filter(targetextra__in=TargetExtra.objects.filter(key='Last_fit', value__lte=four_hours_ago)).filter(targetextra__in=TargetExtra.objects.filter(key='Alive', value=True))
+                
+                if len(queryset) == 0:
+                    queryset = Target.objects.filter(targetextra__in=TargetExtra.objects.filter(key='Alive', value=True))
                 element = queryset.first()
 
                 # Claim the job as running by setting the last fit timestamp. This condition
@@ -167,7 +172,7 @@ class Command(BaseCommand):
 
             # Now we know for sure we have an element to process, and we haven't locked
             # the database. We're free to process this for up to four hours.
-            result = run_fit(element)
+            result = run_fit(element,options['cores'])
 
 if __name__ == '__main__':
     main()
