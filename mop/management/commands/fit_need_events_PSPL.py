@@ -168,6 +168,9 @@ class Command(BaseCommand):
                 queryset = queryset.filter(targetextra__in=TargetExtra.objects.filter(key='Last_fit', value__lte=cutoff))
                 queryset = queryset.filter(targetextra__in=TargetExtra.objects.filter(key='Alive', value=True))
 
+                # Inform the user how much work is left in the queue
+                print('Target(s) remaining in processing queue:', queryset.count())
+
                 # Retrieve the first element which meets the condition
                 element = queryset.first()
 
