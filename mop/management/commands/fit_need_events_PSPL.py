@@ -148,10 +148,10 @@ class Command(BaseCommand):
             # ownership of the job by advancing the timestamp to the current time. This
             # ensures that we don't have two workers running the same job. A beneficial
             # side effect of this implementation is that a job which crashes isn't retried
-            # for another four hours, which limits the potential impact.
+            # for another N hours, which limits the potential impact.
             #
             # The only time this system breaks down is if a single processing fit takes
-            # more than four hours. We'll instruct Kubernetes that no data processing Pod
+            # more than N hours. We'll instruct Kubernetes that no data processing Pod
             # should run for that long. That'll protect us against that overrun scenario.
             #
             # The whole thing is wrapped in a database transaction to protect against
@@ -187,7 +187,7 @@ class Command(BaseCommand):
                 sys.exit(0)
 
             # Now we know for sure we have an element to process, and we haven't locked
-            # a row (object) in the database. We're free to process this for up to four hours.
+            # a row (object) in the database. We're free to process this for up to N hours.
             result = run_fit(element, cores=options['cores'])
 
 if __name__ == '__main__':
