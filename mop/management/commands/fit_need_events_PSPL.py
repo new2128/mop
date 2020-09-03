@@ -17,7 +17,7 @@ import sys
 import os
 
 
-def run_fit(target,cores):
+def run_fit(target, cores):
     print(f'Working on {target.name}')
 
     try:
@@ -122,6 +122,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--cores', help='Number of workers (CPU cores) to use', default=os.cpu_count(), type=int)
+        parser.add_argument('--run-every', help='Run each Fit every N hours', default=4, type=int)
 
     def handle(self, *args, **options):
 
@@ -145,19 +146,13 @@ class Command(BaseCommand):
             # and will protect against that.
             with transaction.atomic():
 
-                four_hours_ago = Time(datetime.datetime.utcnow() - datetime.timedelta(hours=4)).jd
+                # Cutoff date: N hours ago (from the "--run-every=N" hours command line argument)
+                cutoff = Time(datetime.datetime.utcnow() - datetime.timedelta(hours=options['run_every'])).jd
 
-                # Find any objects which are 
+                # Find any objects which need to be run
                 # https://docs.djangoproject.com/en/3.0/ref/models/querysets/#select-for-update
                 queryset = Target.objects.select_for_update(skip_locked=True)
-                queryset = queryset.filter(targetextra__in=(
-                    # Last_fit timestamp does not exist in the object
-                    Q(TargetExtra.objects.filter(key='Last_fit', value=None))
-                    | # OR
-                    # Last_fit timestamp (last job run) was over four hours ago
-                    Q(TargetExtra.objects.filter(key='Last_fit', value__lte=four_hours_ago))
-                ))
-                # AND the Alive flag == True
+                queryset = queryset.filter(targetextra__in=TargetExtra.objects.filter(key='Last_fit', value__lte=cutoff))
                 queryset = queryset.filter(targetextra__in=TargetExtra.objects.filter(key='Alive', value=True))
 
                 # Retrieve the first element which meets the condition
@@ -179,7 +174,7 @@ class Command(BaseCommand):
 
             # Now we know for sure we have an element to process, and we haven't locked
             # a row (object) in the database. We're free to process this for up to four hours.
-            result = run_fit(element,options['cores'])
+            result = run_fit(element, cores=options['cores'])
 
 if __name__ == '__main__':
     main()
