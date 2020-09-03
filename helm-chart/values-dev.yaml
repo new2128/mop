@@ -65,7 +65,12 @@ fitaliveevents:
 # CronJob: Fit Need Events
 fitneedevents:
   enabled: true
+  # Run in parallel across 2 Nodes (Machines) until all jobs
+  # are finished.
+  parallelism: 2
+  # Use 2 CPU on each Node (Machine)
   cores: 2
+  # CPU/Memory requests/limits
   resources:
     requests:
       cpu: 2
