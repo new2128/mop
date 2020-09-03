@@ -144,22 +144,29 @@ class Command(BaseCommand):
             # collisions by two workers. Very unlikely, but we're good software engineers
             # and will protect against that.
             with transaction.atomic():
-            
+
                 four_hours_ago = Time(datetime.datetime.utcnow() - datetime.timedelta(hours=4)).jd
 
-
+                # Find any objects which are 
                 # https://docs.djangoproject.com/en/3.0/ref/models/querysets/#select-for-update
                 queryset = Target.objects.select_for_update(skip_locked=True)
-                queryset = Target.objects.filter(targetextra__in=TargetExtra.objects.filter(key='Last_fit', value__lte=four_hours_ago)).filter(targetextra__in=TargetExtra.objects.filter(key='Alive', value=True))
-                
-                if len(queryset) == 0:
-                    queryset = Target.objects.filter(targetextra__in=TargetExtra.objects.filter(key='Alive', value=True))
+                queryset = queryset.filter(targetextra__in=(
+                    # Last_fit timestamp does not exist in the object
+                    Q(TargetExtra.objects.filter(key='Last_fit', value=None))
+                    | # OR
+                    # Last_fit timestamp (last job run) was over four hours ago
+                    Q(TargetExtra.objects.filter(key='Last_fit', value__lte=four_hours_ago))
+                ))
+                # AND the Alive flag == True
+                queryset = queryset.filter(targetextra__in=TargetExtra.objects.filter(key='Alive', value=True))
+
+                # Retrieve the first element which meets the condition
                 element = queryset.first()
 
-                # Claim the job as running by setting the last fit timestamp. This condition
-                # has the beneficial side effect such that if a fit crashes, it won't be
-                # re-run (retried) for another four hours. This limits the impact of broken
-                # code on the cluster.
+                # Claim the element for this worker (mark the fit as "RUNNING" state) by
+                # setting the Last_fit timestamp. This condition has the beneficial side
+                # effect such that if a fit crashes, it won't be re-run (retried) for
+                # another four hours. This limits the impact of broken code on the cluster.
                 last_fit = Time(datetime.datetime.utcnow()).jd
                 extras = {'Last_fit':last_fit}
                 element.save(extras = extras)
@@ -171,7 +178,7 @@ class Command(BaseCommand):
                 sys.exit(0)
 
             # Now we know for sure we have an element to process, and we haven't locked
-            # the database. We're free to process this for up to four hours.
+            # a row (object) in the database. We're free to process this for up to four hours.
             result = run_fit(element,options['cores'])
 
 if __name__ == '__main__':
