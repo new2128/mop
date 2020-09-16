@@ -175,7 +175,21 @@ class Command(BaseCommand):
 
                 # Retrieve the first element which meets the condition
                 element = queryset.first()
-
+                                
+                try:
+                    last_fit = element.extra_fields['Last_fit']
+                    datasets = ReducedDatum.objects.filter(target=element)
+                    time = [Time(i.timestamp).jd for i in datasets if i.data_type == 'photometry']
+                    last_observation = max(time)
+                    
+                    if last_observation>last_fit:
+                        need_to_fit = True
+                    else:
+                        need_to_fit = False
+                except:
+                
+                    need_to_fit = True    
+                    
                 # Claim the element for this worker (mark the fit as "RUNNING" state) by
                 # setting the Last_fit timestamp. This condition has the beneficial side
                 # effect such that if a fit crashes, it won't be re-run (retried) for
@@ -192,7 +206,12 @@ class Command(BaseCommand):
 
             # Now we know for sure we have an element to process, and we haven't locked
             # a row (object) in the database. We're free to process this for up to four hours.
-            result = run_fit(element, cores=options['cores'])
+            
+            # Check if the fit is really needed, i.e. is there new data since the last fit?
+            
+            
+            if need_to_fit:
+                result = run_fit(element, cores=options['cores'])
 
 if __name__ == '__main__':
     main()
