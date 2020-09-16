@@ -74,6 +74,8 @@ repeated in a bunch of places, so to keep from repeating ourselves, we'll
 build it here and use it everywhere.
 */}}
 {{- define "mop.backendEnv" -}}
+- name: PYTHONUNBUFFERED
+  value: "1"
 - name: DB_HOST
   value: {{ include "mop.dbhost" . | quote }}
 - name: DB_NAME

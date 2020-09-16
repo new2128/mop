@@ -125,24 +125,19 @@ class Command(BaseCommand):
         parser.add_argument('--run-every', help='Run each Fit every N hours', default=4, type=int)
 
     def handle(self, *args, **options):
-
-
-        #Adding Last_fit if dos not exist
+        # The TOM Toolkit project does not automatically create key/value pairs
+        # in the "Extra Fields" during a database migration. We use this silly
+        # method to automatically add this field to any Target objects which were
+        # created before this field was added to the database.
+        # Adding Last_fit if dos not exist
         list_of_targets = Target.objects.filter()
-        
         for target in list_of_targets:
-
-
             try:
                 last_fit = target.extra_fields['Last_fit']
-                
             except:
                 last_fit = 2446756.50000
-
-
                 extras = {'Last_fit':last_fit}
                 target.save(extras = extras)
-
 
         # Run until all objects which need processing have been processed
         while True:
@@ -153,10 +148,10 @@ class Command(BaseCommand):
             # ownership of the job by advancing the timestamp to the current time. This
             # ensures that we don't have two workers running the same job. A beneficial
             # side effect of this implementation is that a job which crashes isn't retried
-            # for another four hours, which limits the potential impact.
+            # for another N hours, which limits the potential impact.
             #
             # The only time this system breaks down is if a single processing fit takes
-            # more than four hours. We'll instruct Kubernetes that no data processing Pod
+            # more than N hours. We'll instruct Kubernetes that no data processing Pod
             # should run for that long. That'll protect us against that overrun scenario.
             #
             # The whole thing is wrapped in a database transaction to protect against
@@ -173,8 +168,12 @@ class Command(BaseCommand):
                 queryset = queryset.filter(targetextra__in=TargetExtra.objects.filter(key='Last_fit', value__lte=cutoff))
                 queryset = queryset.filter(targetextra__in=TargetExtra.objects.filter(key='Alive', value=True))
 
+                # Inform the user how much work is left in the queue
+                print('Target(s) remaining in processing queue:', queryset.count())
+
                 # Retrieve the first element which meets the condition
                 element = queryset.first()
+
                                 
                 try:
                     last_fit = element.extra_fields['Last_fit']
@@ -198,6 +197,16 @@ class Command(BaseCommand):
                 extras = {'Last_fit':last_fit}
                 element.save(extras = extras)
 
+                # Element was found. Claim the element for this worker (mark the fit as in
+                # the "RUNNING" state) by setting the Last_fit timestamp. This method has
+                # the beneficial side effect such that if a fit crashes, it won't be re-run
+                # (retried) for another N hours. This limits the impact of broken code on the cluster.
+                if element is not None:
+                    last_fit = Time(datetime.datetime.utcnow()).jd
+                    extras = {'Last_fit':last_fit}
+                    element.save(extras = extras)
+
+
             # If there are no more objects left to process, then the job is finished.
             # Inform Kubernetes of this fact by exiting successfully.
             if element is None:
@@ -212,6 +221,7 @@ class Command(BaseCommand):
             
             if need_to_fit:
                 result = run_fit(element, cores=options['cores'])
+
 
 if __name__ == '__main__':
     main()

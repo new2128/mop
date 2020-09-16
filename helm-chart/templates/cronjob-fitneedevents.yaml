@@ -18,7 +18,10 @@ spec:
         {{- include "mop.labels" . | nindent 8 }}
         app.kubernetes.io/component: "fitneedevents"
     spec:
-      activeDeadlineSeconds: 3600
+      # The maximum amount of time that this job is allowed to execute for, before being terminated and
+      # marked as FAILED. See: https://kubernetes.io/docs/concepts/workloads/controllers/job/#job-termination-and-cleanup
+      activeDeadlineSeconds: {{ default 3600 .Values.fitneedevents.activeDeadlineSeconds }}
+      # Run across multiple machines in parallel if requested
       parallelism: {{ default 1 .Values.fitneedevents.parallelism }}
       template:
         metadata:
@@ -39,6 +42,9 @@ spec:
                 - fit_need_events_PSPL
                 {{- with .Values.fitneedevents.cores }}
                 - --cores={{ . }}
+                {{- end }}
+                {{- with .Values.fitneedevents.runEvery }}
+                - --run-every={{ . }}
                 {{- end }}
               env:
                 {{- include "mop.backendEnv" . | nindent 16 }}
