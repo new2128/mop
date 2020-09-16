@@ -188,15 +188,7 @@ class Command(BaseCommand):
                 except:
                 
                     need_to_fit = True    
-                    
-                # Claim the element for this worker (mark the fit as "RUNNING" state) by
-                # setting the Last_fit timestamp. This condition has the beneficial side
-                # effect such that if a fit crashes, it won't be re-run (retried) for
-                # another four hours. This limits the impact of broken code on the cluster.
-                last_fit = Time(datetime.datetime.utcnow()).jd
-                extras = {'Last_fit':last_fit}
-                element.save(extras = extras)
-
+              
                 # Element was found. Claim the element for this worker (mark the fit as in
                 # the "RUNNING" state) by setting the Last_fit timestamp. This method has
                 # the beneficial side effect such that if a fit crashes, it won't be re-run
