@@ -174,20 +174,20 @@ class Command(BaseCommand):
                 # Retrieve the first element which meets the condition
                 element = queryset.first()
 
+                need_to_fit = True
                                 
                 try:
                     last_fit = element.extra_fields['Last_fit']
                     datasets = ReducedDatum.objects.filter(target=element)
                     time = [Time(i.timestamp).jd for i in datasets if i.data_type == 'photometry']
                     last_observation = max(time)
-                    
-                    if last_observation>last_fit:
-                        need_to_fit = True
-                    else:
+                    existing_model = ReducedDatum.objects.filter(source_name='MOP',data_type='lc_model',source_location=element.name)
+                                                         
+                    if (last_observation<last_fit) & (existing_model.count() != 0) :
                         need_to_fit = False
                 except:
                 
-                    need_to_fit = True    
+                    pass    
               
                 # Element was found. Claim the element for this worker (mark the fit as in
                 # the "RUNNING" state) by setting the Last_fit timestamp. This method has
