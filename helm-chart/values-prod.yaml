@@ -67,12 +67,17 @@ ingress:
 # CronJob: Fit Alive Events
 fitaliveevents:
   enabled: true
+  # Run in parallel across 6 Nodes (Machines) until all jobs are finished
+  parallelism: 6
+  # Use 3 CPU on each Node (Machine)
+  cores: 3
+  # CPU/Memory requests/limits
   resources:
     requests:
-      cpu: 3000m
-      memory: 2048Mi
+      cpu: 2
+      memory: 512Mi
     limits:
-      cpu: 3500m
+      cpu: 3200m
       memory: 4096Mi
 
 # CronJob: Fit Need Events
