@@ -252,6 +252,7 @@ FACILITIES = {
                   '8': 'GMOS Aquisiton 0.75arcsec',
                   '9': 'Std: R400 LongSlit 0.75arcsec for Red Objects',
                   '17': 'Std: B600 LongSlit 0.75arcsec for Blue Objects',
+           },
         },
     },
 }
