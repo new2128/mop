@@ -238,19 +238,20 @@ FACILITIES = {
             'GN': 'https://128.171.88.221:8443',
         },
         'api_key': {
-            'GS': '',
-            'GN': '',
+            'GS': os.environ.get('GEMINI_S_API_KEY','dummy'),
+            'GN': os.environ.get('GEMINI_N_API_KEY','dummy'),
         },
-        'user_email': '',
+        'user_email':  os.environ.get('GEMINI_USERNAME','dummy'),
         'programs': {
-            'GS-YYYYS-T-NNN': {
-                'MM': 'Std: Some descriptive text',
-                'NN': 'Rap: Some descriptive text'
+            'GS-2020A-DD-104': {
+                '8':  'GMOS Aquisiton 0.75arcsec',
+                '9':  'Std: R400 LongSlit 0.75arcsec for Blue Objects',
+                '12': 'Std: B600 LongSlit 0.75arcsec for Red Objects',
             },
-            'GN-YYYYS-T-NNN': {
-                'QQ': 'Std: Some descriptive text',
-                'PP': 'Rap: Some descriptive text',
-            },
+            'GN-2020A-DD-104': {
+                  '8': 'GMOS Aquisiton 0.75arcsec',
+                  '9': 'Std: R400 LongSlit 0.75arcsec for Red Objects',
+                  '17': 'Std: B600 LongSlit 0.75arcsec for Blue Objects',
         },
     },
 }
