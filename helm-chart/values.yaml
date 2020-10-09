@@ -185,6 +185,9 @@ djangoDebug: true
 # These MUST be overridden in secret configuration file
 antaresKey: ""
 antaresPassword: ""
+geminiUsername: ""
+geminiNApiKey: ""
+geminiSApiKey: ""
 lcoApiKey: ""
 lcoProposalId: ""
 lcoUsername: ""
