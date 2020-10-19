@@ -35,7 +35,7 @@ class Command(BaseCommand):
        if all_events == 'need':
            
            four_hours_ago = Time(datetime.datetime.utcnow() - datetime.timedelta(hours=4)).jd
-           list_of_targets = Target.objects.exclude(targetextra__in=TargetExtra.objects.filter(key='Last_Fit', value_lte=four_hours_ago)
+           list_of_targets = Target.objects.exclude(targetextra__in=TargetExtra.objects.filter(key='Last_Fit', value_lte=four_hours_ago))
 
        if all_events[0] == '[':     
             
