@@ -1,4 +1,4 @@
-tomtoolkit
+tomtoolkit>=1.12.2
 #tom-antares>=0.1.0
 psycopg2===2.8.4
 gunicorn[gevent]==20.0.4
