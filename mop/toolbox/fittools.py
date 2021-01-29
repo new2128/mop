@@ -130,7 +130,7 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
        Model_parallax = microlmodels.create_model('PSPL', current_event, parallax=['Full', t0_par])
        Model_parallax.parameters_boundaries[0] = [t0_fit-100,t0_fit+100]
       
-       Model_parallax.parameters_boundaries[1] = [0,2]
+       Model_parallax.parameters_boundaries[1] = [-2,2]
        Model_parallax.parameters_boundaries[2] = [0.1,500]
        #Model_parallax.parameters_boundaries[3] = [-1,1]
        #Model_parallax.parameters_boundaries[4] = [-1,1]
