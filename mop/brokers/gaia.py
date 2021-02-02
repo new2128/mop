@@ -28,7 +28,7 @@ def update_gaia_errors(target):
 
     for i in datasets:
 
-        if i.data_type == 'photometry':
+        if (i.data_type == 'photometry') & ("error" not in i.value):
             magnitude = json.loads(i.value)['magnitude']
             error = estimateGaiaError(magnitude)
             new_value = i.value[:-1]+', "error":'+str(error)[:7]+'}'

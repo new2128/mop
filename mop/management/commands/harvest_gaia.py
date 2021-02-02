@@ -4,6 +4,68 @@ from astropy.coordinates import SkyCoord
 import astropy.units as unit
 from tom_targets.models import Target
 from mop.brokers import gaia as gaia_mop
+from astropy.time import Time
+
+BASE_BROKER_URL = gaia.BASE_BROKER_URL
+
+
+class MOPGaia(gaia.GaiaBroker):
+
+    def process_reduced_data(self, target, alert=None):
+        if not alert:
+            try:
+                alert = self.fetch_alert(target.name)
+
+            except HTTPError:
+                raise Exception('Unable to retrieve alert information from broker')
+
+        if alert is not None:
+            alert_name = alert['name']
+            alert_link = alert.get('per_alert', {})['link']
+            lc_url = f'{BASE_BROKER_URL}/alerts/alert/{alert_name}/lightcurve.csv'
+            alert_url = f'{BASE_BROKER_URL}/{alert_link}'
+        elif target:
+            lc_url = f'{BASE_BROKER_URL}/{target.name}/lightcurve.csv'
+            alert_url = f'{BASE_BROKER_URL}/alerts/alert/{target.name}/'
+        else:
+            return
+
+        response = requests.get(lc_url)
+        response.raise_for_status()
+        html_data = response.text.split('\n')
+        
+        try:
+            times = [Time(i.timestamp).jd for i in ReducedDatum.objects.filter(target=150) if i.data_type == 'photometry']
+        except: 
+            times = []
+        
+        for entry in html_data[2:]:
+            phot_data = entry.split(',')
+
+            if len(phot_data) == 3:
+            
+                jd = Time(float(phot_data[1]), format='jd', scale='utc')
+                jd.to_datetime(timezone=TimezoneInfo())
+
+                if ('untrusted' not in phot_data[2]) and ('null' not in phot_data[2]) and (jd not in times):
+                    
+                    value = {
+                    'magnitude': float(phot_data[2]),
+                    'filter': 'G'
+                    }
+
+                    rd, _ = ReducedDatum.objects.get_or_create(
+                    timestamp=jd.to_datetime(timezone=TimezoneInfo()),
+                    value=json.dumps(value),
+                    source_name=self.name,
+                    source_location=alert_url,
+                    data_type='photometry',
+                    target=target)
+                    rd.save()
+
+        return
+
+    
 
 class Command(BaseCommand):
 
@@ -13,7 +75,8 @@ class Command(BaseCommand):
        
     def handle(self, *args, **options):
         
-        Gaia = gaia.GaiaBroker()
+        Gaia = MOPGaia()
+        
         list_of_alerts = Gaia.fetch_alerts({'target_name':None,'cone':None})
         
         for alert in list_of_alerts:
