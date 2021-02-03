@@ -11,6 +11,8 @@ from requests.exceptions import HTTPError
 from tom_alerts.alerts import GenericAlert, GenericBroker, GenericQueryForm
 from tom_dataproducts.models import ReducedDatum
 
+from astropy.time import Time, TimezoneInfo
+
 BASE_BROKER_URL = gaia.BASE_BROKER_URL
 
 
@@ -40,7 +42,7 @@ class MOPGaia(gaia.GaiaBroker):
         html_data = response.text.split('\n')
         
         try:
-            times = [Time(i.timestamp).jd for i in ReducedDatum.objects.filter(target=150) if i.data_type == 'photometry']
+            times = [Time(i.timestamp).jd for i in ReducedDatum.objects.filter(target=target) if i.data_type == 'photometry']
         except: 
             times = []
         
