@@ -12,6 +12,7 @@ from tom_alerts.alerts import GenericAlert, GenericBroker, GenericQueryForm
 from tom_dataproducts.models import ReducedDatum
 
 from astropy.time import Time, TimezoneInfo
+import json
 
 BASE_BROKER_URL = gaia.BASE_BROKER_URL
 
