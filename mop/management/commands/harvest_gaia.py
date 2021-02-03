@@ -55,7 +55,7 @@ class MOPGaia(gaia.GaiaBroker):
                 jd = Time(float(phot_data[1]), format='jd', scale='utc')
                 jd.to_datetime(timezone=TimezoneInfo())
 
-                if ('untrusted' not in phot_data[2]) and ('null' not in phot_data[2]) and (jd not in times):
+                if ('untrusted' not in phot_data[2]) and ('null' not in phot_data[2]) and (jd.value not in times):
                     
                     value = {
                     'magnitude': float(phot_data[2]),
