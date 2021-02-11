@@ -22,7 +22,7 @@ LOGIN_URL = "https://irsa.ipac.caltech.edu/account/signon/login.do"
 
 class Command(BaseCommand):
 
-    help = 'Clean a data product kind for a list of targets'
+    help = 'Download ZTF DR3 for MOP targets'
     
     def add_arguments(self, parser):
               parser.add_argument('events_to_harvest', help='all, alive, need or [years]')
@@ -58,6 +58,11 @@ class Command(BaseCommand):
             radius = 0.0001 #arsec
 
             try:
+                times = [Time(i.timestamp).jd for i in ReducedDatum.objects.filter(target=target) if i.data_type == 'photometry']
+            except: 
+                times = []
+
+            try:
                 url = 'https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves?POS=CIRCLE '+str(ra)+' '+str(dec)+' '+str(radius)+'&FORMAT=CSV'
                 response = requests.get(url,  timeout=20,auth=(username,password))
 
@@ -85,6 +90,24 @@ class Command(BaseCommand):
                                            'filter': filt,
                                            'error': emag
                                            }
+                                  
+                                  jd.to_datetime(timezone=TimezoneInfo())
+
+                                  if  (jd.value not in times):
+                                    
+                                         rd, _ = ReducedDatum.objects.get_or_create(
+                                                timestamp=jd.to_datetime(timezone=TimezoneInfo()),
+                                                value=json.dumps(value),
+                                                source_name=self.name,
+                                                source_location=alert_url,
+                                                data_type='photometry',
+                                                target=target)
+                                        
+                                        rd.save()
+                                  
+                                  else:
+                                  
+                                    
                                            
                                   existing_point =   ReducedDatum.objects.filter(source_name='IRSA',timestamp=jd.to_datetime(timezone=TimezoneInfo()))
 

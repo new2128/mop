@@ -63,12 +63,13 @@ class MOPGaia(gaia.GaiaBroker):
                     }
 
                     rd, _ = ReducedDatum.objects.get_or_create(
-                    timestamp=jd.to_datetime(timezone=TimezoneInfo()),
-                    value=json.dumps(value),
-                    source_name=self.name,
-                    source_location=alert_url,
-                    data_type='photometry',
-                    target=target)
+                            timestamp=jd.to_datetime(timezone=TimezoneInfo()),
+                            value=value,
+                            source_name=self.name,
+                            source_location=alert_url,
+                            data_type='photometry',
+                            target=target)
+                    
                     rd.save()
 
         return
