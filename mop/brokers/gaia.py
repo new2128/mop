@@ -28,10 +28,11 @@ def update_gaia_errors(target):
 
     for i in datasets:
 
-        if (i.data_type == 'photometry') & ("error" not in i.value.keys()) &  (i['filter']=='G'):
+        if (i.data_type == 'photometry') & ("error" not in i.value)  &  ('"filter": "G"' in i.value):
             magnitude = json.loads(i.value)['magnitude']
             error = estimateGaiaError(magnitude)
            
-            i.value['error'] = error
+            new_value = i.value[:-1]+', "error":'+str(error)[:7]+'}'
+            i.value = new_value 
             
             i.save()
