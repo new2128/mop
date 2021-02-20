@@ -90,7 +90,7 @@ class ZTFIPACBroker(GenericBroker):
                         except: 
                             times = []
 
-                       if all([key in alert['candidate'] for key in ['jd', 'magpsf', 'fid', 'sigmapsf']]):
+                        if all([key in alert['candidate'] for key in ['jd', 'magpsf', 'fid', 'sigmapsf']]):
                           jd = Time(alert['candidate']['jd'], format='jd', scale='utc')
                           jd.to_datetime(timezone=TimezoneInfo())
                           
