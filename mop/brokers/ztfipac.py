@@ -46,7 +46,7 @@ class ZTFIPACBroker(GenericBroker):
         list_of_events = [str(i)[6:-8] for i in ztf_ipac if '<td>ZTF' in str(i)]
         list_of_mars_links = [str(i).split('"')[1] for i in ztf_ipac if '<td><a href="https://mars.lco.global/' in str(i)]
 
-
+        import pdb; pdb.set_trace()
         for index,event in enumerate(list_of_events):
 
             try:
@@ -81,16 +81,14 @@ class ZTFIPACBroker(GenericBroker):
                    
 
                 filters = {1: 'g_ZTF', 2: 'r_ZTF', 3: 'i_ZTF'}
-
+                try:
+                    times = [Time(i.timestamp).jd for i in ReducedDatum.objects.filter(target=target) if i.data_type == 'photometry']
+                except: 
+                    times = []
 
                 for alert in alerts:
-                   try:
-                        try:
-                            times = [Time(i.timestamp).jd for i in ReducedDatum.objects.filter(target=target) if i.data_type == 'photometry']
-                        except: 
-                            times = []
-
-                        if all([key in alert['candidate'] for key in ['jd', 'magpsf', 'fid', 'sigmapsf']]):
+                
+                    if all([key in alert['candidate'] for key in ['jd', 'magpsf', 'fid', 'sigmapsf']]):
                           jd = Time(alert['candidate']['jd'], format='jd', scale='utc')
                           jd.to_datetime(timezone=TimezoneInfo())
                           
@@ -127,7 +125,7 @@ class ZTFIPACBroker(GenericBroker):
                           
                                 pass          
                           
-                   except:
+                   else:
 
                           pass
             except:
