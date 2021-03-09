@@ -46,7 +46,7 @@ class ZTFIPACBroker(GenericBroker):
         list_of_events = [str(i)[6:-8] for i in ztf_ipac if '<td>ZTF' in str(i)]
         list_of_mars_links = [str(i).split('"')[1] for i in ztf_ipac if '<td><a href="https://mars.lco.global/' in str(i)]
 
-        import pdb; pdb.set_trace()
+
         for index,event in enumerate(list_of_events):
 
             try:
@@ -115,7 +115,7 @@ class ZTFIPACBroker(GenericBroker):
                                         timestamp=jd.to_datetime(timezone=TimezoneInfo()),
                                         value=json.dumps(value),
                                         source_name=self.name,
-                                        source_location=alert_url,
+                                        source_location='IRSA',
                                         data_type='photometry',
                                         target=target)
                                 
