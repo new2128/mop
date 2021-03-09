@@ -125,7 +125,7 @@ class ZTFIPACBroker(GenericBroker):
                           
                                 pass          
                           
-                   else:
+                    else:
 
                           pass
             except:
