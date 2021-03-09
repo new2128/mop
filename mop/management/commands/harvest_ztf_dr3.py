@@ -99,11 +99,11 @@ class Command(BaseCommand):
                                                 timestamp=jd.to_datetime(timezone=TimezoneInfo()),
                                                 value=json.dumps(value),
                                                 source_name=self.name,
-                                                source_location=alert_url,
+                                                source_location='IRSA',
                                                 data_type='photometry',
                                                 target=target)
                                         
-                                        rd.save()
+                                         rd.save()
                                   
                                   else:
                                   
