@@ -1,14 +1,16 @@
 import mimetypes
-import json
+import numpy as np
+
+from datetime import datetime
 
 from astropy import units
-from astropy.io import ascii
-from astropy.time import Time, TimezoneInfo
-
+from astropy.io import fits, ascii
+from astropy.time import Time
+from astropy.wcs import WCS
+from specutils import Spectrum1D
 
 from tom_dataproducts.data_processor import DataProcessor
 from tom_dataproducts.exceptions import InvalidFileFormatException
-
 from tom_dataproducts.processors.data_serializers import SpectrumSerializer
 from tom_observations.facility import get_service_class, get_service_classes
 
@@ -53,7 +55,7 @@ class SpectroscopyProcessor(DataProcessor):
         :rtype: specutils.Spectrum1D
         :returns: Datetime of observation, if it is in the header and the file is from a supported facility, current
             datetime otherwise
-        :rtype: AstroPy.Time
+        :rtype: AstroPy.Timenp.
         """
         from django.core.files.storage import default_storage
         data_aws = default_storage.open(data_product.data.name, 'r')
