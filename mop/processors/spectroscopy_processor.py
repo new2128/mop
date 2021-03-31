@@ -55,6 +55,7 @@ class SpectroscopyProcessor(DataProcessor):
             datetime otherwise
         :rtype: AstroPy.Time
         """
+        from django.core.files.storage import default_storage
         data_aws = default_storage.open(data_product.data.name, 'r')
         flux, header = fits.getdata(data_aws.read(), header=True)
 
@@ -101,7 +102,7 @@ class SpectroscopyProcessor(DataProcessor):
             datetime otherwise
         :rtype: AstroPy.Time
         """
- 
+        from django.core.files.storage import default_storage
         data_aws = default_storage.open(data_product.data.name, 'r')
 
         data = ascii.read(data_aws.read())
