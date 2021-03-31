@@ -5,7 +5,7 @@ from datetime import datetime
 
 from astropy import units
 from astropy.io import fits
-
+from astropy.io import ascii as astroascii
 from astropy.time import Time
 from astropy.wcs import WCS
 from specutils import Spectrum1D
@@ -107,10 +107,10 @@ class SpectroscopyProcessor(DataProcessor):
         """
         
         from django.core.files.storage import default_storage
-        from astropy.io import ascii
+
         data_aws = default_storage.open(data_product.data.name, 'r')
 
-        data = ascii.read(data_aws.read(),names=['wavelength','flux'])
+        data = astroascii.read(data_aws.read(),names=['wavelength','flux'])
         
         if len(data) < 1:
             raise InvalidFileFormatException('Empty table or invalid file type')
