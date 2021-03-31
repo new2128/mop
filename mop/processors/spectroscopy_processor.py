@@ -4,7 +4,8 @@ import numpy as np
 from datetime import datetime
 
 from astropy import units
-from astropy.io import fits, ascii
+from astropy.io import fits
+from astropy.io import ascii
 from astropy.time import Time
 from astropy.wcs import WCS
 from specutils import Spectrum1D
@@ -104,18 +105,18 @@ class SpectroscopyProcessor(DataProcessor):
             datetime otherwise
         :rtype: AstroPy.Time
         """
-        print('start data process')
+        
         from django.core.files.storage import default_storage
         data_aws = default_storage.open(data_product.data.name, 'r')
 
         data = ascii.read(data_aws.read(),names=['wavelength','flux'])
-        print('data read')
+        
         if len(data) < 1:
             raise InvalidFileFormatException('Empty table or invalid file type')
         facility_name = None
         date_obs = datetime.now()
         comments = data.meta.get('comments', [])
-        print('find comments')
+        
         for comment in comments:
             if 'date-obs' in comment.lower():
                 date_obs = comment.split(':')[1].strip()
