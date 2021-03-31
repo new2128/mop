@@ -105,7 +105,7 @@ class SpectroscopyProcessor(DataProcessor):
         from django.core.files.storage import default_storage
         data_aws = default_storage.open(data_product.data.name, 'r')
 
-        data = ascii.read(data_aws.read())
+        data = ascii.read(data_aws.read(),names=['wavelength','flux'])
         if len(data) < 1:
             raise InvalidFileFormatException('Empty table or invalid file type')
         facility_name = None
