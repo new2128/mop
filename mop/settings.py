@@ -272,7 +272,7 @@ DATA_PRODUCT_TYPES = {
 DATA_PROCESSORS = {
 
     'photometry': 'mop.processors.photometry_processor.PhotometryProcessor',
-    'spectroscopy': 'mop.processors.spectroscopy_processor.SpectroscopyProcessor',
+    'spectroscopy': 'mop.processors.spectroscopy_processor.SpecProcessor',
 }
 
 TOM_FACILITY_CLASSES = [

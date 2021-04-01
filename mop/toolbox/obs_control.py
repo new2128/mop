@@ -238,7 +238,9 @@ def build_and_submit_phot(target, obs_type):
           #instrument_type = '0M4-SCICAM-SBIG'  
           #exposure_time_ip *= 4 # area ratio
 
-       exposure_time_gp = exposure_time_ip+50 
+       exposure_time_gp = np.min((exposure_time_ip*3.,600)) #no more than 10 min. Factor 3 returns same SNR for ~(g-i) = 1.2
+       
+       
    
        # ip alone
        obs_dic = {}
