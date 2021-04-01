@@ -260,6 +260,11 @@ FACILITIES = {
 
 # Define the valid data product types for your TOM. Be careful when removing items, as previously valid types will no
 # longer be valid, and may cause issues unless the offending records are modified.
+DATA_TYPES = (
+    ('SPECTROSCOPY', 'Spectroscopy'),
+    ('PHOTOMETRY', 'Photometry')
+)
+
 DATA_PRODUCT_TYPES = {
     'photometry': ('photometry', 'Photometry'),
     'fits_file': ('fits_file', 'FITS File'),
