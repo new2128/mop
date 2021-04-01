@@ -1,21 +1,26 @@
 import mimetypes
-from tom_dataproducts.processors.spectroscopy_processor import SpectroscopyProcessor
+import numpy as np
+
+from datetime import datetime
+
+from astropy import units
+from astropy.io import fits
+from astropy.io import ascii 
+from astropy.time import Time
+from astropy.wcs import WCS
+from specutils import Spectrum1D
+
+from tom_dataproducts.data_processor import DataProcessor
 from tom_dataproducts.exceptions import InvalidFileFormatException
 from tom_dataproducts.processors.data_serializers import SpectrumSerializer
 from tom_observations.facility import get_service_class, get_service_classes
-from django.core.files.storage import default_storage
-from astropy.io import fits
-from astropy.wcs import WCS
-from astropy.time import Time
-from astropy import units
-from specutils import Spectrum1D
-from datetime import datetime
 
 # This is a custom processor made for AWS S3 bucket compliance
 
-class SpecProcessor(SpectroscopyProcessor):
+class SpectroscopyProcessor(DataProcessor):
    
-    
+    DEFAULT_WAVELENGTH_UNITS = units.angstrom
+    DEFAULT_FLUX_CONSTANT = units.erg / units.cm ** 2 / units.second / units.angstrom
    
     def process_data(self, data_product):
         """
