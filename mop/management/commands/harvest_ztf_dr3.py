@@ -50,7 +50,8 @@ class Command(BaseCommand):
 
        list_of_targets = list(list_of_targets)
        random.shuffle(list_of_targets)
-       
+       import pdb; pdb.set_trace()
+
        for target in list_of_targets:
        
             ra =    target.ra	
