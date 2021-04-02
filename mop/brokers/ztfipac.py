@@ -114,7 +114,7 @@ class ZTFIPACBroker(GenericBroker):
                                 rd, _ = ReducedDatum.objects.get_or_create(
                                         timestamp=jd.to_datetime(timezone=TimezoneInfo()),
                                         value=json.dumps(value),
-                                        source_name=self.name,
+                                        source_name='ZTF IPAC',
                                         source_location='IRSA',
                                         data_type='photometry',
                                         target=target)
