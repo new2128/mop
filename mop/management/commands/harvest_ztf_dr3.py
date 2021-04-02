@@ -36,7 +36,8 @@ class Command(BaseCommand):
        all_events = options['events_to_harvest']
        
        list_of_targets = all_events
-       
+       import pdb; pdb.set_trace()
+
        if all_events == 'all':
            list_of_targets = Target.objects.filter()
        if all_events == 'alive':
