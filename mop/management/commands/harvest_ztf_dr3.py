@@ -35,8 +35,8 @@ class Command(BaseCommand):
        filters = {'zg': 'g_ZTF', 'zr': 'r_ZTF'}
        all_events = options['events_to_harvest']
        
-       list_of_targets = all_events
-       import pdb; pdb.set_trace()
+       list_of_targets = Target.objects.filter(name = all_events)
+
 
        if all_events == 'all':
            list_of_targets = Target.objects.filter()
@@ -104,7 +104,7 @@ class Command(BaseCommand):
                                          rd, _ = ReducedDatum.objects.get_or_create(
                                                 timestamp=jd.to_datetime(timezone=TimezoneInfo()),
                                                 value=json.dumps(value),
-                                                source_name=self.name,
+                                                source_name='ZTFDR3',
                                                 source_location='IRSA',
                                                 data_type='photometry',
                                                 target=target)
