@@ -35,7 +35,7 @@ class Command(BaseCommand):
        filters = {'zg': 'g_ZTF', 'zr': 'r_ZTF'}
        all_events = options['events_to_harvest']
        
-       list_of_targets = [all_events]
+       list_of_targets = all_events
        
        if all_events == 'all':
            list_of_targets = Target.objects.filter()
