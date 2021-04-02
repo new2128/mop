@@ -35,6 +35,8 @@ class Command(BaseCommand):
        filters = {'zg': 'g_ZTF', 'zr': 'r_ZTF'}
        all_events = options['events_to_harvest']
        
+       list_of_targets = [all_events]
+       
        if all_events == 'all':
            list_of_targets = Target.objects.filter()
        if all_events == 'alive':
@@ -47,10 +49,12 @@ class Command(BaseCommand):
             for year in years:
  
                  list_of_targets =  [i for i in events if year in i.name]
-
+       
+       
+        
        list_of_targets = list(list_of_targets)
        random.shuffle(list_of_targets)
-       import pdb; pdb.set_trace()
+
 
        for target in list_of_targets:
        
