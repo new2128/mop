@@ -12,7 +12,7 @@ from tom_alerts.alerts import GenericAlert, GenericBroker, GenericQueryForm
 from tom_dataproducts.models import ReducedDatum
 
 from astropy.time import Time, TimezoneInfo
-import json
+
 
 BASE_BROKER_URL = gaia.BASE_BROKER_URL
 
@@ -64,7 +64,7 @@ class MOPGaia(gaia.GaiaBroker):
 
                     rd, _ = ReducedDatum.objects.get_or_create(
                             timestamp=jd.to_datetime(timezone=TimezoneInfo()),
-                            value=json.dumps(value),
+                            value=value,
                             source_name=self.name,
                             source_location=alert_url,
                             data_type='photometry',

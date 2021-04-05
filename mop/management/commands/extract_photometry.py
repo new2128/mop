@@ -4,7 +4,7 @@ from mop.toolbox import obs_control
 from astropy.time import Time
 import datetime
 from tom_dataproducts.models import ReducedDatum
-import json
+
 import numpy as np
 
 class Command(BaseCommand):
@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
         time = [Time(i.timestamp).jd for i in datasets if i.data_type == 'photometry']
         names = [i.source_name for i in datasets if i.data_type == 'photometry']
-        phot = [[json.loads(i.value)['magnitude'],json.loads(i.value)['error'],json.loads(i.value)['filter']] for i in datasets if i.data_type == 'photometry']
+        phot = [[i.value['magnitude'],i.value['error'],i.value['filter']] for i in datasets if i.data_type == 'photometry']
 
         photometry = np.c_[names,time,phot]
 

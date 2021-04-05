@@ -67,7 +67,7 @@ class Command(BaseCommand):
 
                         rd, created = ReducedDatum.objects.get_or_create(
                                   timestamp=datetime.datetime.utcnow(),
-                                  value=json.dumps(data),
+                                  value=data,
                                   source_name='MOP',
                                   source_location=event.name,
                                   data_type='TAP_priority',
