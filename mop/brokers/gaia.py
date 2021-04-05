@@ -1,5 +1,4 @@
 from tom_dataproducts.models import ReducedDatum
-import json
 
 #for a given mag computes new error-bar
 #from Gaia DR2 papers, degraded by x10 (N=100 ccds), in log
@@ -28,11 +27,10 @@ def update_gaia_errors(target):
 
     for i in datasets:
 
-        if (i.data_type == 'photometry') & ("error" not in i.value)  &  ('"filter": "G"' in i.value):
-            magnitude = json.loads(i.value)['magnitude']
-            error = estimateGaiaError(magnitude)
+        if (i.data_type == 'photometry') & ("error" not in i.value.keys())  &  ('"filter": "G"' in i.value.keys()):
            
-            new_value = i.value[:-1]+', "error":'+str(error)[:7]+'}'
-            i.value = new_value 
+            magnitude = i.value['magnitude']
+            error = estimateGaiaError(magnitude)
+            i.value['error'] = error 
             
             i.save()

@@ -36,11 +36,11 @@ class Command(BaseCommand):
            for data in datasets:
                if data.data_type == 'photometry':
                     try:
-                         phot.append([json.loads(data.value)['magnitude'],json.loads(data.value)['error'],json.loads(data.value)['filter']])
+                         phot.append([data.value['magnitude'],data.value['error'],data.value['filter']])
                
                     except:
                          # Weights == 1
-                         phot.append([json.loads(data.value)['magnitude'],1,json.loads(data.value)['filter']])
+                         phot.append([data.value['magnitude'],1,data.value['filter']])
                    
                   
 
@@ -64,7 +64,7 @@ class Command(BaseCommand):
            if existing_model.count() == 0:     
                 rd, created = ReducedDatum.objects.get_or_create(
                                                                     timestamp=model_time,
-                                                                    value=json.dumps(data),
+                                                                    value=data,
                                                                     source_name='MOP',
                                                                     source_location=target.name,
                                                                     data_type='lc_model',
@@ -80,7 +80,7 @@ class Command(BaseCommand):
                                                                     source_location=target.name,
                                                                     data_type='lc_model',
                                                                     target=target,
-                                                                    defaults={'value':json.dumps(data)})                  
+                                                                    defaults={'value':data})                  
 
                 rd.save()
                   

@@ -1,5 +1,3 @@
-import json
-
 from django import template
 from django.conf import settings
 from django.core.paginator import Paginator
@@ -27,7 +25,7 @@ def mop_photometry(target):
     """
     photometry_data = {}
     for datum in ReducedDatum.objects.filter(target=target, data_type=settings.DATA_PRODUCT_TYPES['photometry'][0]):
-        values = json.loads(datum.value)
+        values = datum.value
         try:
            
                 photometry_data.setdefault(values['filter'], {})
@@ -86,7 +84,7 @@ def mop_photometry(target):
     try:
        for datum in ReducedDatum.objects.filter(target=target, data_type=settings.DATA_PRODUCT_TYPES['lc_model'][0]).order_by('-id')[:1]:
 
-            values = json.loads(datum.value)
+            values =datum.value
             time = np.array(values['lc_model_time'])-2450000
             mag = np.array(values['lc_model_magnitude'])
             fig.add_trace(go.Scatter(x=time, y=mag,
