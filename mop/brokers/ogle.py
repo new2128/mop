@@ -11,7 +11,7 @@ import astropy.units as unit
 import ftplib
 import os
 import numpy as np
-import json
+
 from astropy.time import Time, TimezoneInfo
 
 
@@ -125,7 +125,7 @@ class OGLEBroker(GenericBroker):
                        }
                 rd, created = ReducedDatum.objects.get_or_create(
                 timestamp=jd.to_datetime(timezone=TimezoneInfo()),
-                value=json.dumps(data),
+                value=data,
                 source_name='OGLE',
                 source_location=target.name,
                 data_type='photometry',

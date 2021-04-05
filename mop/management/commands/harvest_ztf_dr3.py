@@ -7,7 +7,6 @@ from mop.brokers import gaia as gaia_mop
 from django.conf import settings
 
 import os
-import json
 import numpy as np
 import datetime
 import numpy as np
@@ -103,7 +102,7 @@ class Command(BaseCommand):
                                     
                                          rd, _ = ReducedDatum.objects.get_or_create(
                                                 timestamp=jd.to_datetime(timezone=TimezoneInfo()),
-                                                value=json.dumps(value),
+                                                value=value,
                                                 source_name='ZTFDR3',
                                                 source_location='IRSA',
                                                 data_type='photometry',

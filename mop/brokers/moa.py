@@ -11,7 +11,6 @@ import astropy.units as unit
 import urllib
 import os
 import numpy as np
-import json
 from astropy.time import Time, TimezoneInfo
 import datetime
 
@@ -124,7 +123,7 @@ class MOABroker(GenericBroker):
                        }
                     rd, created = ReducedDatum.objects.get_or_create(
                     timestamp=jd.to_datetime(timezone=TimezoneInfo()),
-                    value=json.dumps(data),
+                    value=data,
                     source_name='MOA',
                     source_location=target.name,
                     data_type='photometry',

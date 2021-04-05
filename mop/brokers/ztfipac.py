@@ -10,7 +10,7 @@ import requests
 from tom_alerts.brokers.mars import MARSQueryForm, MARSBroker
 from tom_alerts.models import BrokerQuery
 import numpy as np
-import json
+
 from astropy.time import Time, TimezoneInfo
 
 BROKER_URL = 'https://www.astro.caltech.edu/~pmroz/microlensing/table.html'
@@ -113,7 +113,7 @@ class ZTFIPACBroker(GenericBroker):
                                     
                                 rd, _ = ReducedDatum.objects.get_or_create(
                                         timestamp=jd.to_datetime(timezone=TimezoneInfo()),
-                                        value=json.dumps(value),
+                                        value=value,
                                         source_name='ZTF IPAC',
                                         source_location='IRSA',
                                         data_type='photometry',
