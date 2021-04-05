@@ -32,7 +32,7 @@ class SpectroscopyProcessor(DataProcessor):
         :rtype: list
         """
 
-        mimetype = mimetypes.guess_type(data_product.data.path)[0]
+        mimetype = mimetypes.guess_type(data_product.data.name)[0]
         if mimetype in self.FITS_MIMETYPES:
             spectrum, obs_date = self._process_spectrum_from_fits(data_product)
         elif mimetype in self.PLAINTEXT_MIMETYPES:
@@ -102,7 +102,7 @@ class SpectroscopyProcessor(DataProcessor):
         :returns: Spectrum1D object containing the data from the DataProduct
         :rtype: specutils.Spectrum1D
         :returns: Datetime of observation, if it is in the comments and the file is from a supported facility, current
-            datetime otherwise
+            datetime otherwiseMy hubby has more chores but he is good about it
         :rtype: AstroPy.Time
         """
         
