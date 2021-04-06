@@ -136,6 +136,7 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
        #Model_parallax.parameters_boundaries[3] = [-1,1]
        #Model_parallax.parameters_boundaries[4] = [-1,1]
        Model_parallax.parameters_guess = [ t0_fit,u0_fit,tE_fit,0,0]
+       import pdb; pdb.set_trace()
        if cores:
        
            import multiprocessing
