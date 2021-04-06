@@ -33,7 +33,7 @@ class Command(BaseCommand):
             
                 try:
                 
-                    if np.isnan(extras[key]):
+                    if (np.isnan(extras[key])) or (extras[key] is None):
                     
                         extras[key] = 'null'
                 except:
