@@ -13,14 +13,14 @@ import json
 
 def clean_lc_model(target):
 
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
 
     try:
     
         existing_model =   ReducedDatum.objects.filter(source_location=target.name,data_type='lc_model',)
         model = json.loads(existing_model[0].value)
 
-        if np.nan in model['lc_model_magnitude']:
+        if True in np.isnan(model['lc_model_magnitude']):
 
             data = {'lc_model_time': [],
                     'lc_model_magnitude': []}
