@@ -32,7 +32,7 @@ class SpectroscopyProcessor(DataProcessor):
         :rtype: list
         """
 
-        mimetype = mimetypes.guess_type(data_product.data.path)[0]
+        mimetype = mimetypes.guess_type(data_product.data.name)[0]
         if mimetype in self.FITS_MIMETYPES:
             spectrum, obs_date = self._process_spectrum_from_fits(data_product)
         elif mimetype in self.PLAINTEXT_MIMETYPES:

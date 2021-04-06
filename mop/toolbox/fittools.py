@@ -169,6 +169,9 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
        magnitude = microltoolbox.flux_to_magnitude(flux_model)
        model_telescope.lightcurve_magnitude[:,1] = magnitude
 
+       mask = ~np.isnan(magnitude)
+       model_telescope.lightcurve_magnitude = model_telescope.lightcurve_magnitude[mask]
+       
 
        try:
             to_return = [np.around(t0_fit,3),np.around(u0_fit,5),np.around(tE_fit,3),np.around(piEN_fit,5),np.around(piEE_fit,5),
