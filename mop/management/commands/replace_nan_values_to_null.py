@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
 
        for target in list_of_targets:
-       
+            print(target.name, ' Start cleaning')
             extras = target.extra_fields
             
             for key in extras.keys():
