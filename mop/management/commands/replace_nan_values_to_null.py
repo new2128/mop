@@ -29,7 +29,7 @@ class Command(BaseCommand):
        
             extras = target.extra_fields
             
-            for key in extra.keys():
+            for key in extras.keys():
             
                 try:
                 
