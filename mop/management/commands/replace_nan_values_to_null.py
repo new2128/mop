@@ -18,20 +18,7 @@ def clean_lc_model(target):
     try:
     
         existing_model =   ReducedDatum.objects.filter(source_location=target.name,data_type='lc_model',)
-        model = json.loads(existing_model[0].value)
-
-        if True in np.isnan(model['lc_model_magnitude']):
-
-            data = {'lc_model_time': [],
-                    'lc_model_magnitude': []}
-            
-            rd, created = ReducedDatum.objects.update_or_create(timestamp=existing_model[0].timestamp,
-                                                                value=json.dumps(data),
-                                                                source_name='MOP',
-                                                                source_location=target.name,
-                                                                data_type='lc_model',
-                                                                target=target)   
-            rd.save()         
+        existing_model.delete()
     except:
     
         pass
