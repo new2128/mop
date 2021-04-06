@@ -170,7 +170,7 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
        flux_model = current_event.fits[0].model.compute_the_microlensing_model(model_telescope, pyLIMA_parameters)[0]
        magnitude = microltoolbox.flux_to_magnitude(flux_model)
        model_telescope.lightcurve_magnitude[:,1] = magnitude
-       import pdb; pdb.set_trace()
+
        mask = ~np.isnan(magnitude)
        model_telescope.lightcurve_magnitude = model_telescope.lightcurve_magnitude[mask]
        
