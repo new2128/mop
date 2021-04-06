@@ -6,7 +6,7 @@ from mop.toolbox import fittools
 from mop.brokers import gaia as gaia_mop
 from django.conf import settings
 
-
+import random
 import numpy as np
 import datetime
 
