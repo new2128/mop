@@ -64,13 +64,14 @@ def fit_PSPL(photometry, emag_limit = None, cores = None):
        chi2_fit = current_event.fits[-1].fit_results[-1]
 
        mag_source_fit = flux_to_mag( current_event.fits[-1].fit_results[3])
-
-       try:
-           mag_blend_fit = flux_to_mag( current_event.fits[-1].fit_results[3]*current_event.fits[-1].fit_results[4])
-           mag_baseline_fit = flux_to_mag( current_event.fits[-1].fit_results[3]*(1+current_event.fits[-1].fit_results[4]))
-       except:
-           mag_blend_fit = 0
-           mag_baseline_fit = mag_source
+       mag_blend_fit = flux_to_mag( current_event.fits[-1].fit_results[3]*current_event.fits[-1].fit_results[4])
+       mag_baseline_fit = flux_to_mag( current_event.fits[-1].fit_results[3]*(1+current_event.fits[-1].fit_results[4]))
+       
+       if np.isnan(mag_blend_fit):
+           mag_blend_fit = "null"
+           mag_baseline_fit = mag_source_fit
+       
+           
 
        return [t0_fit,u0_fit,tE_fit,mag_source_fit,mag_blend_fit,mag_baseline_fit,chi2_fit]
 
@@ -157,12 +158,9 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
 
        mag_source_fit = flux_to_mag( current_event.fits[-1].fit_results[5])
 
-       try:
-           mag_blend_fit = flux_to_mag( current_event.fits[-1].fit_results[5]*current_event.fits[-1].fit_results[6])
-           mag_baseline_fit = flux_to_mag( current_event.fits[-1].fit_results[5]*(1+current_event.fits[-1].fit_results[6]))
-       except:
-           mag_blend_fit = 0
-           mag_baseline_fit = mag_source
+       if np.isnan(mag_blend_fit):
+           mag_blend_fit = "null"
+           mag_baseline_fit = mag_source_fit
 
        microloutputs.create_the_fake_telescopes(current_event.fits[0],current_event.fits[0].fit_results[:-1])
        model_telescope = current_event.fits[0].event.fake_telescopes[0]
@@ -171,6 +169,13 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
        magnitude = microltoolbox.flux_to_magnitude(flux_model)
        model_telescope.lightcurve_magnitude[:,1] = magnitude
 
-       return [t0_fit,u0_fit,tE_fit,piEN_fit,piEE_fit,
-               mag_source_fit,mag_blend_fit,mag_baseline_fit,
-               current_event.fits[-1].fit_covariance,model_telescope]
+
+       try:
+            to_return = [np.around(t0_fit,3),np.around(u0_fit,5),np.around(tE_fit,3),np.around(piEN_fit,5),np.around(piEE_fit,5),
+               np.around(mag_source_fit,3),np.around(mag_blend_fit,3),np.around(mag_baseline_fit,3),
+               current_event.fits[-1].fit_covariance,model_telescope] 
+       except:
+            to_return = [np.around(t0_fit,3),np.around(u0_fit,5),np.around(tE_fit,3),np.around(piEN_fit,5),np.around(piEE_fit,5),
+               np.around(mag_source_fit,3),mag_blend_fit,np.around(mag_baseline_fit,3),
+               current_event.fits[-1].fit_covariance,model_telescope] 
+       return to_return

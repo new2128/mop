@@ -98,13 +98,13 @@ class Command(BaseCommand):
               alive = True
            
            last_fit = Time(datetime.datetime.utcnow()).jd
-           extras = {'Alive':alive, 't0':np.around(t0_fit,3),'u0':np.around(np.max([10**-5,u0_fit]),5),'tE':np.around(tE_fit,3),
-                     'piEN':np.around(piEN_fit,5),'piEE':np.around(piEE_fit,5),
-                     'Source_magnitude':np.around(mag_source_fit,3),
-                     'Blend_magnitude':np.around(mag_blend_fit,3),
-                     'Baseline_magnitude':np.around(mag_baseline_fit,3),
-                     'Fit_covariance':json.dumps(cov.tolist()),
-                     'Last_fit':last_fit}
+           extras = {'Alive':alive, 't0':t0_fit,'u0':u0_fit,'tE':tE_fit,
+                         'piEN':piEN_fit,'piEE':piEE_fit,
+                         'Source_magnitude':mag_source_fit,
+                         'Blend_magnitude':mag_blend_fit,
+                         'Baseline_magnitude':mag_baseline_fit,
+                         'Fit_covariance':json.dumps(cov.tolist()),
+                         'Last_Fit':last_fit}
            target.save(extras = extras)
        except:
            pass

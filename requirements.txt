@@ -1,4 +1,4 @@
-tomtoolkit==2.4.0
+tomtoolkit==2.3.0
 #tom_publications==0.1.0
 #tom-antares>=0.1.0
 psycopg2===2.8.4
