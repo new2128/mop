@@ -136,7 +136,7 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
        #Model_parallax.parameters_boundaries[3] = [-1,1]
        #Model_parallax.parameters_boundaries[4] = [-1,1]
        Model_parallax.parameters_guess = [ t0_fit,u0_fit,tE_fit,0,0]
-       import pdb; pdb.set_trace()
+
        if cores:
        
            import multiprocessing
@@ -158,7 +158,8 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
        piEE_fit =  current_event.fits[-1].fit_results[4]
 
        mag_source_fit = flux_to_mag( current_event.fits[-1].fit_results[5])
-
+       mag_blend_fit = flux_to_mag( current_event.fits[-1].fit_results[5]*current_event.fits[-1].fit_results[6])
+       mag_baseline_fit = flux_to_mag( current_event.fits[-1].fit_results[5]*(1+current_event.fits[-1].fit_results[6]))
        if np.isnan(mag_blend_fit):
            mag_blend_fit = "null"
            mag_baseline_fit = mag_source_fit
