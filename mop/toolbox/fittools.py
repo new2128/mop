@@ -69,7 +69,7 @@ def fit_PSPL(photometry, emag_limit = None, cores = None):
        
        if np.isnan(mag_blend_fit):
            mag_blend_fit = "null"
-           mag_baseline_fit = mag_source_fit
+
        
            
 
@@ -160,9 +160,10 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
        mag_source_fit = flux_to_mag( current_event.fits[-1].fit_results[5])
        mag_blend_fit = flux_to_mag( current_event.fits[-1].fit_results[5]*current_event.fits[-1].fit_results[6])
        mag_baseline_fit = flux_to_mag( current_event.fits[-1].fit_results[5]*(1+current_event.fits[-1].fit_results[6]))
+       
        if np.isnan(mag_blend_fit):
            mag_blend_fit = "null"
-           mag_baseline_fit = mag_source_fit
+
 
        microloutputs.create_the_fake_telescopes(current_event.fits[0],current_event.fits[0].fit_results[:-1])
        model_telescope = current_event.fits[0].event.fake_telescopes[0]
