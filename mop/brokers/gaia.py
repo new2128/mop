@@ -27,7 +27,7 @@ def update_gaia_errors(target):
 
     for i in datasets:
 
-        if (i.data_type == 'photometry') & ("error" not in i.value.keys())  &  ('"filter": "G"' in i.value.keys()):
+        if (i.data_type == 'photometry') & ("error" not in i.value.keys())  &  ('Gaia' in i.source_name):
            
             magnitude = i.value['magnitude']
             error = estimateGaiaError(magnitude)
