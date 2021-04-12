@@ -211,6 +211,7 @@ def TAP_mag_now(target):
        fb = 10**((ZP-target.extra_fields['Blend_magnitude'])/2.5)
 
    except:
+      fs = 10**((ZP-target.extra_fields['Baseline_magnitude'])/2.5) 
       fb = 0 
    fit_parameters = [target.extra_fields['t0'],target.extra_fields['u0'],target.extra_fields['tE'],
                      target.extra_fields['piEN'],target.extra_fields['piEE'],

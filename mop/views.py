@@ -15,7 +15,7 @@ class MOPTargetDetailView(TargetDetailView):
             target_name = self.get_object().name
             out = StringIO()
             print(target_id,target_name)
-            call_command('fit_event_PSPL', target_name, stdout=out)
+            call_command('fit_event_PSPL', target_name, cores=0, stdout=out)
             return redirect(reverse('tom_targets:detail', args=(target_id,)))
 
         TAP_event = request.GET.get('tap_event', False)

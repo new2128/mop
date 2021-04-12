@@ -45,7 +45,7 @@ def fit_PSPL(photometry, emag_limit = None, cores = None):
        Model.parameters_boundaries[0] = [Model.parameters_boundaries[0][0],Model.parameters_boundaries[0][-1]+500]
        Model.parameters_boundaries[1] = [0,2]
        
-       if cores:
+       if cores != 0:
        
            import multiprocessing
            with multiprocessing.Pool(processes=cores) as pool:
@@ -137,7 +137,7 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
        #Model_parallax.parameters_boundaries[4] = [-1,1]
        Model_parallax.parameters_guess = [ t0_fit,u0_fit,tE_fit,0,0]
 
-       if cores:
+       if cores !=0:
        
            import multiprocessing
            with multiprocessing.Pool(processes=cores) as pool:
