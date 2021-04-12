@@ -53,7 +53,7 @@ def fit_PSPL(photometry, emag_limit = None, cores = None):
                      
        else:
        
-           current_event.fit(Model_parallax, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit')
+           current_event.fit(Model, 'DE',DE_population_size=10,flux_estimation_MCMC = 'polyfit')
        
            
 
