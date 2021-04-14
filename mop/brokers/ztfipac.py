@@ -46,13 +46,13 @@ class ZTFIPACBroker(GenericBroker):
         list_of_events = [str(i)[6:-8] for i in ztf_ipac if '<td>ZTF' in str(i)]
         list_of_mars_links = [str(i).split('"')[1] for i in ztf_ipac if '<td><a href="https://mars.lco.global/' in str(i)]
 
-        import pdb; pdb.set_trace()
+        
 
         for index,event in enumerate(list_of_events):
 
-            
+            import pdb; pdb.set_trace()    
             MARS_candidates = requests.get(list_of_mars_links[index]+'&format=json').json()
-            cone_search = str(MARS_candidates['results'][0]['candidate']['ra'])+','+str(MARS_candidates['results'][0]['candidate']['dec'])+','+str(0.0001)
+            cone_search = str(MARS_candidates['results'][0]['candidate']['ra'])+','+str(MARS_candidates['results'][0]['candidate']['dec'])+','+str(0.00013)
             mars_form = MARSQueryForm({'cone':cone_search,'query_name':'Query ZTF IPAC : '+event, 'broker':'MARS'})
             mars_form.is_valid()
             query = BrokerQuery.objects.create(
