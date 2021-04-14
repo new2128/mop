@@ -58,9 +58,9 @@ class ZTFIPACBroker(GenericBroker):
                 query = BrokerQuery.objects.create(
                                name='Query ZTF IPAC : '+event,
                                broker=mars.name,
-                               parameters=mars_form.serialize_parameters()
+                               parameters=parameters=mars_form.data
                                                )
-                alerts = mars.fetch_alerts(query.parameters_as_dict)
+                alerts = mars.fetch_alerts(query.parameters)
                 alerts = [*alerts]  
 
                 name = event
