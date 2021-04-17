@@ -38,7 +38,7 @@ def fit_PSPL(photometry, emag_limit = None, cores = None):
                                             light_curve_magnitude_dictionnary={'time': 0, 'mag': 1, 'err_mag': 2},
                                             clean_the_lightcurve='Yes')
 
-           if len(lightcurve>5):
+           if len(lightcurve)>5:
                current_event.telescopes.append(telescope)
 
        Model = microlmodels.create_model('PSPL', current_event, parallax=['None', 0])
@@ -123,7 +123,7 @@ def fit_PSPL_parallax(ra,dec,photometry, emag_limit = None, cores = None):
                                             light_curve_magnitude_dictionnary={'time': 0, 'mag': 1, 'err_mag': 2},
                                             clean_the_lightcurve='Yes')
 
-           if len(lightcurve>5):
+           if len(lightcurve)>5:
                current_event.telescopes.append(telescope)
            
 
