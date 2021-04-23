@@ -310,12 +310,24 @@ def build_and_submit_phot(target, obs_type):
        request_obs.is_valid()
        the_obs = request_obs.observation_payload()
        
+       list_of_filters = ["ip","gp"]
+        
+       #if in the Bulge, switch gp to rp 
+       
+       event_in_the_Bulge = TAP.event_in_the_Bulge(target.ra, target.dec)
+       
+       if (event_in_the_Bulge):
+       
+            list_of_filters[-1] = "rp"
+            exposure_time_gp =  exposure_time_gp/2 #Factor 3/2 returns same SNR for ~(g-i) = 0.4
+       
+            
        #Hacking the LCO TOM form to add several filters 
        instument_config =   the_obs['requests'][0]['configurations'][0]['instrument_configs'][0]
        exposure_times = [exposure_time_ip,exposure_time_gp]
 
        for ind_req,req in enumerate(the_obs['requests']):
-           for ind_fil,fil in enumerate(["ip","gp"]):
+           for ind_fil,fil in enumerate(list_of_filters):
                
                if ind_fil>0:
                    new_instrument_config =  copy.deepcopy(instument_config)
