@@ -192,7 +192,7 @@ def build_and_submit_phot(target, obs_type):
        
        else:
 
-          ipp = 1.0  
+          ipp = 0.95 
           obs_name = target.name+'_'+'REG_phot'
           obs_duration = 7 #days
            
@@ -281,7 +281,7 @@ def build_and_submit_phot(target, obs_type):
                                       observation_id=observation_id
                                       )
        # gp,ip 
-       import pdb; pdb.set_trace()
+
        delta_time = cadence/2
 
        start = (datetime.datetime.utcnow()+datetime.timedelta(hours=delta_time)).isoformat()
