@@ -68,6 +68,7 @@ def build_and_submit_spectro(target, obs_type):
        facility = 'LCO'
        observation_mode = 'NORMAL'
        max_airmass = 2
+       
        if obs_type == 'priority':
           
           ipp = 1.1  
@@ -77,7 +78,7 @@ def build_and_submit_spectro(target, obs_type):
        
        else:
 
-          ipp = 1.0  
+          ipp = 0.9
           obs_name = target.name+'_'+'REG_spectro'
           obs_duration = 7 #days
 
@@ -184,7 +185,7 @@ def build_and_submit_phot(target, obs_type):
 
        if obs_type == 'priority':
           
-          ipp = 1.1  
+          ipp = 1.0  
           obs_name = target.name+'_'+'PRI_phot'
           obs_duration = 3 #days
           cadence = 1 #delta_hours/points 
@@ -280,7 +281,7 @@ def build_and_submit_phot(target, obs_type):
                                       observation_id=observation_id
                                       )
        # gp,ip 
-
+       import pdb; pdb.set_trace()
        delta_time = cadence/2
 
        start = (datetime.datetime.utcnow()+datetime.timedelta(hours=delta_time)).isoformat()
