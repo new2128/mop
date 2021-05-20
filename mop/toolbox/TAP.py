@@ -203,39 +203,50 @@ def TAP_telescope_class(sdss_i_mag):
 
    return telescope_class
 
+#def TAP_mag_now(target):
+
+#   fs = 10**((ZP-target.extra_fields['Source_magnitude'])/2.5)
+#   
+#   try:
+#       fb = 10**((ZP-target.extra_fields['Blend_magnitude'])/2.5)
+
+#   except:
+#      fs = 10**((ZP-target.extra_fields['Baseline_magnitude'])/2.5) 
+#      fb = 0 
+#   fit_parameters = [target.extra_fields['t0'],target.extra_fields['u0'],target.extra_fields['tE'],
+#                     target.extra_fields['piEN'],target.extra_fields['piEE'],
+#                     fs,
+#                     fb]
+# 
+#   current_event = event.Event()
+#   current_event.name = 'MOP_to_fit'
+
+#   current_event.ra = target.ra
+#   current_event.dec = target.dec
+
+#   time_now = Time(datetime.datetime.now()).jd
+#   fake_lightcurve = np.c_[time_now,14,0.01]
+#   telescope = telescopes.Telescope(name='Fake', camera_filter='I',
+#                                            light_curve_magnitude= fake_lightcurve,
+#                                            clean_the_lightcurve='No')
+#   current_event.telescopes.append(telescope)
+#   t0_par = fit_parameters[0]
+
+#   Model_parallax = microlmodels.create_model('PSPL', current_event, parallax=['Full', t0_par],blend_flux_ratio=False)
+#   Model_parallax.define_model_parameters()
+#   pyLIMA_parameters = Model_parallax.compute_pyLIMA_parameters(fit_parameters)
+#   ml_model, f_source, f_blending = Model_parallax.compute_the_microlensing_model(telescope, pyLIMA_parameters)
+#   
+#   mag_now = ZP-2.5*np.log10(ml_model)
+#   return mag_now
+   
 def TAP_mag_now(target):
 
-   fs = 10**((ZP-target.extra_fields['Source_magnitude'])/2.5)
-   
-   try:
-       fb = 10**((ZP-target.extra_fields['Blend_magnitude'])/2.5)
-
-   except:
-      fs = 10**((ZP-target.extra_fields['Baseline_magnitude'])/2.5) 
-      fb = 0 
-   fit_parameters = [target.extra_fields['t0'],target.extra_fields['u0'],target.extra_fields['tE'],
-                     target.extra_fields['piEN'],target.extra_fields['piEE'],
-                     fs,
-                     fb]
- 
-   current_event = event.Event()
-   current_event.name = 'MOP_to_fit'
-
-   current_event.ra = target.ra
-   current_event.dec = target.dec
-
+   lightcurve = ReducedDatum.objects.filter(target=target,data_type='lc_model')
    time_now = Time(datetime.datetime.now()).jd
-   fake_lightcurve = np.c_[time_now,14,0.01]
-   telescope = telescopes.Telescope(name='Fake', camera_filter='I',
-                                            light_curve_magnitude= fake_lightcurve,
-                                            clean_the_lightcurve='No')
-   current_event.telescopes.append(telescope)
-   t0_par = fit_parameters[0]
 
-   Model_parallax = microlmodels.create_model('PSPL', current_event, parallax=['Full', t0_par],blend_flux_ratio=False)
-   Model_parallax.define_model_parameters()
-   pyLIMA_parameters = Model_parallax.compute_pyLIMA_parameters(fit_parameters)
-   ml_model, f_source, f_blending = Model_parallax.compute_the_microlensing_model(telescope, pyLIMA_parameters)
-   
-   mag_now = ZP-2.5*np.log10(ml_model)
+   closest_mag = np.argmin(np.abs(lightcurve[0].value['lc_model_time']-time_now))
+
+   mag_now =  lightcurve[0].value['lc_model_magnitude'][closest_mag]
+
    return mag_now
