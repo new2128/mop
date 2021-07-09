@@ -1,4 +1,3 @@
-#import mytom.harvest_asassn
 from mytom.samplecode import ASASSNBroker
 import unittest
 import requests
@@ -27,7 +26,7 @@ class TestActivity(unittest.TestCase):
         broker = ASASSNBroker('ASAS-SN broker')
         
         #harvestasassn = HarvestAsassn()
-    '''    
+        
     #tests that the link to the transient table functions
     def test_open_webpage(self):
         page_response = broker.open_webpage()
@@ -62,9 +61,9 @@ class TestActivity(unittest.TestCase):
         targetlist=broker.fetch_alerts()
         targettype = type(targetlistå[0])
         self.assertTrue(targettype == Target)
-    '''
+    
     def test_find_and_ingest_photometry(self):
         targets = broker.fetch_alerts()
-        for target in targets:
-            lightcurvelinks=broker.find_and_ingest_photometry()
-            self.assertEqual(lightcurvelinks[0],'https://asas-sn.osu.edu/photometry/d2295747-d586-5d1b-8e86-b6d7addf94cc')
+        #for target in targets:
+        lightcurvelinks=broker.find_and_ingest_photometry()
+        self.assertEqual(lightcurvelinks[0],'https://asas-sn.osu.edu/photometry/d2295747-d586-5d1b-8e86-b6d7addf94cc')
