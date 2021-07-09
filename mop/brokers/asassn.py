@@ -20,7 +20,7 @@ from tom_targets.models import Target
 from tom_alerts.alerts import GenericBroker, GenericQueryForm
 from tom_dataproducts.models import ReducedDatum
 
-BROKER_URL = 'http://www.astronomy.ohio-state.edu/asassn/transients.html' #should be a known variable?
+BROKER_URL = 'http://www.astronomy.ohio-state.edu/asassn/transients.html'
 photometry = 'https://asas-sn.osu.edu/photometry'
 
 
@@ -44,25 +44,19 @@ class ASASSNBroker():
             content=t.text_content()
             col.append((content,[]))
         for j in range(1,len(tr_elements)):
-            #T is our j'th row
             T=tr_elements[j]
-            #If row is not of size 12, the //tr data is not from our table 
+            #If row is not of size 12, the //tr data is not from the right table
             if len(T)!=12:
                 break
             i=0
-            #Iterate through each element of the row
             for t in T.iterchildren():
                 data=t.text_content() 
-                #Check if row is empty
                 if i>0:
-                #Convert any numerical value to integers
                     try:
                         data=int(data)
                     except:
                         pass
-                #Append the data to the empty list of the i'th column
                 col[i][1].append(data)
-                #Increment i for the next column
                 i+=1
         return col
 
@@ -110,9 +104,12 @@ class ASASSNBroker():
             cible=SkyCoord(coords[0],coords[1],unit="deg")
             try:
                 target = Target.objects.get(name=target_name)
-                #target = Target.objects.get(ra=)
                 #2arcsec
-            except: 
+                '''
+            except Target.DoesNotExist:
+                target= Target.objects.get() (ra and dec within a certain radius)
+                '''
+            except Target.DoesNotExist: 
                 target, created = Target.objects.get_or_create(name=target_name,ra=cible.ra.degree,dec=cible.dec.degree,
                 type='SIDEREAL',epoch=2000)
                 if created:
@@ -126,42 +123,39 @@ class ASASSNBroker():
         return f.read() 
 
     def find_and_ingest_photometry(self):
-            targets = self.fetch_alerts()
-            #eventually add target parameter, and only do this search if the target isn't fully created
-            #(e.g. no photometry data exists for it yet )
-            time_now = Time(datetime.datetime.now()).jd
-            #for target in targets:
-            #datasets = ReducedDatum.objects.filter(target=target)
-            #existing_time = [Time(i.timestamp).jd for i in datasets if i.data_type == 'photometry']
-            i=0
-            lightcurvelinks=[]
-            lightcurvepartlinks=[]
-            while(i<len(self.retrieve_microlensing_coordinates())):
-                samplera=self.retrieve_microlensing_coordinates()[i][2]
-                sampledec=self.retrieve_microlensing_coordinates()[i][3]
-                sampleralist=samplera.split(':')
-                sampledeclist=sampledec.split(':')
-                photometryurl=os.path.join("https://asas-sn.osu.edu/photometry?utf8=%E2%9C%93&ra="
-                +sampleralist[0]+"%3A"+sampleralist[1]+"%3A"+sampleralist[2]+"&dec="+sampledeclist[0]
-                +"%3A"+sampledeclist[1]+"%3A"+sampledeclist[2]
-                +"&radius=1&vmag_min=&vmag_max=&epochs_min=&epochs_max=&rms_min=&rms_max=&sort_by=raj2000")
-                #req=Request(photometryurl)
-                #html_page=urlopen(req)
-                html_page=urllib.request.urlopen(photometryurl)
-                soup=BeautifulSoup(html_page,"lxml")
+        targets = self.fetch_alerts()
+        #write code to retrieve the index and name of each target, to associate the appropriate target to the RD object at the end of this method
+        #for target in targets:
+        #datasets = ReducedDatum.objects.filter(target=target)
+        #existing_time = [Time(i.timestamp).jd for i in datasets if i.data_type == 'photometry']
+        i=0
+        lightcurvelinks=[]
+        lightcurvepartlinks=[]
+        events=self.retrieve_microlensing_coordinates()
+        while(i<len(events)):
+            samplera=self.retrieve_microlensing_coordinates()[i][2]
+            sampledec=self.retrieve_microlensing_coordinates()[i][3]
+            sampleralist=samplera.split(':')
+            sampledeclist=sampledec.split(':')
+            photometryurl=os.path.join("https://asas-sn.osu.edu/photometry?utf8=%E2%9C%93&ra="
+            +sampleralist[0]+"%3A"+sampleralist[1]+"%3A"+sampleralist[2]+"&dec="+sampledeclist[0]
+            +"%3A"+sampledeclist[1]+"%3A"+sampledeclist[2]
+            +"&radius=.033333&vmag_min=&vmag_max=&epochs_min=&epochs_max=&rms_min=&rms_max=&sort_by=raj2000")
+            html_page=urllib.request.urlopen(photometryurl)
+            soup=BeautifulSoup(html_page,"lxml")
                 
-                for link in soup.findAll('a'):
-                    s=str(link.get('href'))
-                    if('/photometry/' in s):
-                        lightcurvepartlinks.append(link.get('href'))
+            for link in soup.findAll('a'):
+                s=str(link.get('href'))
+                if('/photometry/' in s):
+                    lightcurvepartlinks.append(link.get('href'))
+            i=i+1
                 
-                for partlink in lightcurvepartlinks:
-                    lightcurvelinks.append(os.path.join('https://asas-sn.osu.edu'+partlink))
-                i=i+1
-            
-            #read links:
-            running = True
-            for link in lightcurvelinks:
+        for partlink in lightcurvepartlinks:
+            lightcurvelinks.append(os.path.join('https://asas-sn.osu.edu'+partlink))
+        
+        #read links:
+        for link in lightcurvelinks:
+                    running = True
                     hjd=[]
                     ut_date=[]
                     camera=[]
@@ -193,32 +187,29 @@ class ASASSNBroker():
                                 flux.append(matrix[0][j][6])
                                 flux_error.append(matrix[0][j][7])
                                 j=j+1
-                            data = {'magnitude':mag,'myfilter':myfilter,
-                            'error':mag_error}
-                            jd=Time(2451544.5, format='jd', scale='utc')
-                            try:
-                                rd = ReducedDatum.objects.get(value=data)
-                                #2arcsec
-                                #django cone searches 
-                            except:
-                                rd, created = ReducedDatum.objects.get_or_create(
-                                timestamp=jd.to_datetime(timezone=TimezoneInfo()),
-                                value=['data','nodata'],
-                                source_name='ASAS-SN',
-                                data_type='photometry',
-                                target=targets[0]
-                                )
-                            if created:
-                                rd.save()
-                                print(rd.data_type)
+                            
                             i=i+1
-                                
-                            break
+                               
                         except HTTPError as err:
                             running==False
                             break
-                       
-                        
+                    data = {'magnitude':mag,'myfilter':myfilter,
+                            'error':mag_error}
+                    jd=Time(datetime.datetime.now()).jd
+                    jd=Time(jd, format='jd', scale='utc')
+                    try:
+                        rd = ReducedDatum.objects.get(value=data)
+                    except:
+                        rd, created = ReducedDatum.objects.get_or_create(
+                        timestamp=jd.to_datetime(timezone=TimezoneInfo()),
+                        value=data,
+                        source_name='ASAS-SN',
+                        data_type='photometry',
+                        target=targets[0])
+                    if created:
+                        rd.save()
             
-            return lightcurvelinks
+        return lightcurvelinks
+                            
+
                             
