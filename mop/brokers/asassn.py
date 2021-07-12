@@ -14,8 +14,6 @@ from astropy.coordinates import SkyCoord
 import astropy.units as unit
 import json
 from html_table_parser.parser import HTMLTableParser
-
-
 from tom_targets.models import Target
 from tom_alerts.alerts import GenericBroker, GenericQueryForm
 from tom_dataproducts.models import ReducedDatum
@@ -23,16 +21,20 @@ from tom_dataproducts.models import ReducedDatum
 BROKER_URL = 'http://www.astronomy.ohio-state.edu/asassn/transients.html'
 photometry = 'https://asas-sn.osu.edu/photometry'
 
-
 class ASASSNBroker():
-    def __init__(self, name):  
-        self.name = name 
-    #name='ASAS-SN'
-
+    def __init__(self,name):  
+        self.name = name
+    
+    '''
+    Opens the URL of the ASAS-SN transient table to ensure that the link functions 
+    '''
     def open_webpage(self):
         page_status_code=requests.get(BROKER_URL).status_code
         return page_status_code
 
+    '''
+    Reads data from the ASAS-SN transient table into a list
+    '''
     def retrieve_transient_table(self):
         page=requests.get(BROKER_URL)
         doc = lh.fromstring(page.content)
@@ -45,7 +47,7 @@ class ASASSNBroker():
             col.append((content,[]))
         for j in range(1,len(tr_elements)):
             T=tr_elements[j]
-            #If row is not of size 12, the //tr data is not from the right table
+            #If row is not of size 12, the data is not from the right table
             if len(T)!=12:
                 break
             i=0
@@ -60,6 +62,9 @@ class ASASSNBroker():
                 i+=1
         return col
 
+    '''
+    Searches the transient list for microlensing candidates and appends them to a list of events
+    '''
     def retrieve_microlensing_coordinates(self):
         transienttable = self.retrieve_transient_table()
         listofindices=[]
@@ -83,17 +88,16 @@ class ASASSNBroker():
         selectedasassnids=[]
         listofevents=[]
         for n in listofindices:
-            #is this set up efficiently? 
             listofevents.append([fullids[n],fullasassnids[n],fullralist[n],fulldeclist[n]])
         return listofevents
     
+    '''
+    Creates and saves Target objects from the list of microlensing events 
+    '''
     def fetch_alerts(self):
         list_of_targets=[]
         time_now=Time(datetime.datetime.now()).jd
         listofevents = self.retrieve_microlensing_coordinates()
-        #first index for listofevents is for first event
-        #subindices are for id, second id, ra, dec
-        #event is an array
         for event in listofevents[0:]:
             target_name=event[0]
             ra_split=event[2].split(':')
@@ -104,10 +108,8 @@ class ASASSNBroker():
             cible=SkyCoord(coords[0],coords[1],unit="deg")
             try:
                 target = Target.objects.get(name=target_name)
-                #2arcsec
                 '''
-            except Target.DoesNotExist:
-                target= Target.objects.get() (ra and dec within a certain radius)
+                check for target duplication by ra and dec once this code is written 
                 '''
             except Target.DoesNotExist: 
                 target, created = Target.objects.get_or_create(name=target_name,ra=cible.ra.degree,dec=cible.dec.degree,
@@ -117,20 +119,26 @@ class ASASSNBroker():
             list_of_targets.append(target)
         return list_of_targets
 
+    '''
+    Reads a URL to determine whether it is valid/contains relevent data
+    '''
     def url_get_contents(self,url):
         req = urllib.request.Request(url=url)
         f = urllib.request.urlopen(req)
-        return f.read() 
+        return f.read()
 
+    '''
+    Searches the ASAS-SN photometry database using RA and Dec of photometry candidates and a 2 arcminute radius
+    Creates and saves a ReducedDatum object of the given Target and its associated photometry data
+    '''
     def find_and_ingest_photometry(self):
         targets = self.fetch_alerts()
-        #write code to retrieve the index and name of each target, to associate the appropriate target to the RD object at the end of this method
-        #for target in targets:
-        #datasets = ReducedDatum.objects.filter(target=target)
-        #existing_time = [Time(i.timestamp).jd for i in datasets if i.data_type == 'photometry']
         i=0
         lightcurvelinks=[]
         lightcurvepartlinks=[]
+        indices_with_photometry_data=[]
+        rd_list=[]
+
         events=self.retrieve_microlensing_coordinates()
         while(i<len(events)):
             samplera=self.retrieve_microlensing_coordinates()[i][2]
@@ -148,68 +156,70 @@ class ASASSNBroker():
                 s=str(link.get('href'))
                 if('/photometry/' in s):
                     lightcurvepartlinks.append(link.get('href'))
+                    indices_with_photometry_data.append(i)
             i=i+1
                 
         for partlink in lightcurvepartlinks:
             lightcurvelinks.append(os.path.join('https://asas-sn.osu.edu'+partlink))
-        
-        #read links:
-        for link in lightcurvelinks:
-                    running = True
-                    hjd=[]
-                    ut_date=[]
-                    camera=[]
-                    myfilter=[]
-                    mag=[]
-                    mag_error=[]
-                    flux=[]
-                    flux_error=[]
-                    i=1
-                    while(running==True):
-                        functional_link=os.path.join(link+"?page="+str(i))
-                        #parse through each page of data 
-                        try:
-                            xhtml=self.url_get_contents(functional_link).decode('utf-8')
-                            p = HTMLTableParser()
-                            p.feed(xhtml)
-                            dataframe=pd.DataFrame(p.tables)
-                            matrix=dataframe.to_numpy()
-                            length=len(matrix[0])
-                            j=1
-                            
-                            while(j<length):
-                                hjd.append(matrix[0][j][0])
-                                ut_date.append(matrix[0][j][1])
-                                camera.append(matrix[0][j][2])
-                                myfilter.append(matrix[0][j][3])
-                                mag.append(matrix[0][j][4])
-                                mag_error.append(matrix[0][j][5])
-                                flux.append(matrix[0][j][6])
-                                flux_error.append(matrix[0][j][7])
-                                j=j+1
-                            
-                            i=i+1
-                               
-                        except HTTPError as err:
-                            running==False
-                            break
-                    data = {'magnitude':mag,'myfilter':myfilter,
-                            'error':mag_error}
-                    jd=Time(datetime.datetime.now()).jd
-                    jd=Time(jd, format='jd', scale='utc')
-                    try:
-                        rd = ReducedDatum.objects.get(value=data)
-                    except:
-                        rd, created = ReducedDatum.objects.get_or_create(
-                        timestamp=jd.to_datetime(timezone=TimezoneInfo()),
-                        value=data,
-                        source_name='ASAS-SN',
-                        data_type='photometry',
-                        target=targets[0])
-                    if created:
-                        rd.save()
-            
-        return lightcurvelinks
-                            
 
-                            
+        #Reads links with photometry data
+        k=0
+        for link in lightcurvelinks:
+            running = True
+            hjd=[]
+            ut_date=[]
+            camera=[]
+            myfilter=[]
+            mag=[]
+            mag_error=[]
+            flux=[]
+            flux_error=[]
+            #Parses through each page of data, starting at page 1
+            i=1
+            while(running==True):
+                functional_link=os.path.join(link+"?page="+str(i))
+                try:
+                    xhtml=self.url_get_contents(functional_link).decode('utf-8')
+                    p = HTMLTableParser()
+                    p.feed(xhtml)
+                    dataframe=pd.DataFrame(p.tables)
+                    matrix=dataframe.to_numpy()
+                    length=len(matrix[0])
+                    j=1
+                    while(j<length):
+                        hjd.append(matrix[0][j][0])
+                        ut_date.append(matrix[0][j][1])
+                        camera.append(matrix[0][j][2])
+                        myfilter.append(matrix[0][j][3])
+                        mag.append(matrix[0][j][4])
+                        mag_error.append(matrix[0][j][5])
+                        flux.append(matrix[0][j][6])
+                        flux_error.append(matrix[0][j][7])
+                        j=j+1
+                               
+                except HTTPError as err:
+                    running==False
+                    break
+                i=i+1
+            data = {'magnitude':mag,'myfilter':myfilter,
+                        'error':mag_error}
+            jd=Time(datetime.datetime.now()).jd
+            jd=Time(jd, format='jd', scale='utc')
+            index = indices_with_photometry_data[k]
+            target = targets[index]
+            try:
+                rd = ReducedDatum.objects.get(value=data)
+            except:
+                rd, created = ReducedDatum.objects.get_or_create(
+                    timestamp=jd.to_datetime(timezone=TimezoneInfo()),
+                    value=data,
+                    source_name='ASAS-SN',
+                    data_type='photometry',
+                    target=target)
+            if created:
+                rd.save()
+            rd_list.append(rd)
+            k=k+1
+            
+        return rd_list
+ 
