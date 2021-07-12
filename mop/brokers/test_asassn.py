@@ -1,4 +1,4 @@
-from mytom.samplecode import ASASSNBroker
+from mytom.asassn import ASASSNBroker
 import unittest
 import requests
 from unittest import mock
@@ -11,7 +11,7 @@ from tom_alerts.alerts import GenericBroker, GenericQueryForm
 from tom_dataproducts.models import ReducedDatum
 
 BROKER_URL = 'http://www.astronomy.ohio-state.edu/asassn/transients.html'
-broker = ASASSNBroker('ASAS-SN broker')
+broker = ASASSNBroker('ASAS-SN Broker')
 fakedata = [['id',['','']],['other',['AT2021kdo (= Gaia21bxn)',
 'AT20210du(=Gaia21cqi)']],['ATEL',['','']],['RA',['1:6:42.74','8:8:36.48']],
 ['Dec',['61:59:40.9','-40:53:23.5']],['Discovery',['2021-06-9.44','2021-06-12.74']],
@@ -23,16 +23,14 @@ fakedata = [['id',['','']],['other',['AT2021kdo (= Gaia21bxn)',
 class TestActivity(unittest.TestCase):
     def SetUp(self,broker):
         self.broker = ASASSNBroker('ASAS-SN Broker')
-        broker = ASASSNBroker('ASAS-SN broker')
+        broker = ASASSNBroker('ASAS-SN Broker')
         
-        #harvestasassn = HarvestAsassn()
-        
-    #tests that the link to the transient table functions
+    #Tests that the link to the transient table functions
     def test_open_webpage(self):
         page_response = broker.open_webpage()
         self.assertEqual(200, page_response)
 
-    #tests that harvest_asassn can read rows and there is at least 1 row in the table
+    #Tests that retrieve_transient_table() can read rows and there is at least 1 row in the table
     def test_retrieve_transient_table(self):
         col = broker.retrieve_transient_table()
         self.assertFalse(len(col[0][1])==0)
@@ -48,22 +46,21 @@ class TestActivity(unittest.TestCase):
         self.assertFalse(len(col[10][1])==0)
         self.assertFalse(len(col[11][1])==0)
     
- 
-    #need to mock and use fake data to test that it finds the microlensing candidates
-    
+    #Tests that the number of events created given mock data is correct 
     def test_retrieve_microlensing_coordinates(self):
-        with mock.patch('mytom.samplecode.ASASSNBroker.retrieve_transient_table',return_value=fakedata):
-            #should equal 1
+        with mock.patch('mytom.asassn.ASASSNBroker.retrieve_transient_table',return_value=fakedata):
+            #The length should be 2, given the fake data
             actual_result = broker.retrieve_microlensing_coordinates()
             assert (len(actual_result) == 2)
 
     def test_fetch_alerts(self):
         targetlist=broker.fetch_alerts()
-        targettype = type(targetlistå[0])
+        targettype = type(targetlist[0])
         self.assertTrue(targettype == Target)
     
     def test_find_and_ingest_photometry(self):
         targets = broker.fetch_alerts()
         #for target in targets:
-        lightcurvelinks=broker.find_and_ingest_photometry()
-        self.assertEqual(lightcurvelinks[0],'https://asas-sn.osu.edu/photometry/d2295747-d586-5d1b-8e86-b6d7addf94cc')
+        rd_list = broker.find_and_ingest_photometry()
+        objecttype = type(rd_list[0])
+        assert (objecttype == ReducedDatum)
