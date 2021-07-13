@@ -1,4 +1,4 @@
-from astropy.coordinates import ICRS, Galactic, FK4, FK5
+from astropy.coordinates import ICRS
 from astropy.coordinates import SkyCoord
 from astropy.time import Time, TimezoneInfo
 import astropy.units as u
@@ -54,7 +54,7 @@ class ASASSNBroker():
             i = 0
             for t in T.iterchildren():
                 data = t.text_content()
-                if i>0:
+                if i > 0:
                     try:
                         data = int(data)
                     except:
@@ -105,13 +105,13 @@ class ASASSNBroker():
                 '''
             except Target.DoesNotExist:
                 target, created = Target.objects.get_or_create(name=target_name,
-                    ra=cible.ra.degree, dec=cible.dec.degree,
-                    type='SIDEREAL', epoch=2000)
+                                                                ra=cible.ra.degree, dec=cible.dec.degree,
+                                                                type='SIDEREAL', epoch=2000)
                 if created:
                     target.save()
             list_of_targets.append(target)
         return list_of_targets
- 
+
     def url_get_contents(self, url):
         '''
         Reads a URL to determine whether it is valid/contains relevent data
@@ -139,9 +139,9 @@ class ASASSNBroker():
             sampleralist = samplera.split(':')
             sampledeclist = sampledec.split(':')
             photometryurl = os.path.join("https://asas-sn.osu.edu/photometry?utf8=%E2%9C%93&ra="
-                    + sampleralist[0] + "%3A"+sampleralist[1] + "%3A" + sampleralist[2] + "&dec=" + sampledeclist[0]
-                + "%3A"+sampledeclist[1] + "%3A"+sampledeclist[2]
-                + "&radius=.033333&vmag_min=&vmag_max=&epochs_min=&epochs_max=&rms_min=&rms_max=&sort_by=raj2000")
+                                            + sampleralist[0] + "%3A"+sampleralist[1] + "%3A" + sampleralist[2] + "&dec=" + sampledeclist[0]
+                                            + "%3A"+sampledeclist[1] + "%3A"+sampledeclist[2]
+                                            + "&radius=.033333&vmag_min=&vmag_max=&epochs_min=&epochs_max=&rms_min=&rms_max=&sort_by=raj2000")
             html_page = urllib.request.urlopen(photometryurl)
             soup = BeautifulSoup(html_page, "lxml")
 
@@ -208,7 +208,7 @@ class ASASSNBroker():
                 rd = ReducedDatum.objects.get(value=data)
             except:
                 rd, created = ReducedDatum.objects.get_or_create(
-                    timestamp = jd.to_datetime(timezone=TimezoneInfo()),
+                    timestamp=jd.to_datetime(timezone=TimezoneInfo()),
                     value=data,
                     source_name='ASAS-SN',
                     data_type='photometry',
