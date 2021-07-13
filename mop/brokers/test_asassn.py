@@ -8,12 +8,12 @@ from tom_targets.models import Target
 BROKER_URL = 'http://www.astronomy.ohio-state.edu/asassn/transients.html'
 broker = ASASSNBroker('ASAS-SN Broker')
 fakedata = [['id', ['', '']], ['other', ['AT2021kdo (= Gaia21bxn)',
-    'AT20210du(=Gaia21cqi)']], ['ATEL', ['', '']], ['RA', ['1:6:42.74', '8:8:36.48']],
-    ['Dec', ['61:59:40.9', '-40:53:23.5']], ['Discovery', ['2021-06-9.44', '2021-06-12.74']],
-    ['V/g', ['13.98', '15.46']], ['SDSS', ['', '']], ['DSS', ['', '']], ['Vizier', ['', '']],
-    ['Spectroscopic Class', ['', '']],
-    ['comments', ['known microlensing event or Be-type outburst, discovered 2021/04/16.801',
-        'known candidate Be-star or microlensing event, discovered 2021/06/01.188']]]
+            'AT20210du(=Gaia21cqi)']], ['ATEL', ['', '']], ['RA', ['1:6:42.74', '8:8:36.48']],
+            ['Dec', ['61:59:40.9', '-40:53:23.5']], ['Discovery', ['2021-06-9.44', '2021-06-12.74']],
+            ['V/g', ['13.98', '15.46']], ['SDSS', ['', '']], ['DSS', ['', '']], ['Vizier', ['', '']],
+            ['Spectroscopic Class', ['', '']],
+            ['comments', ['known microlensing event or Be-type outburst, discovered 2021/04/16.801',
+                            'known candidate Be-star or microlensing event, discovered 2021/06/01.188']]]
 
 
 class TestActivity(unittest.TestCase):
