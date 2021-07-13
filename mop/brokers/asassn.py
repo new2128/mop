@@ -1,5 +1,7 @@
+from astropy.coordinates import ICRS, Galactic, FK4, FK5
 from astropy.coordinates import SkyCoord
 from astropy.time import Time, TimezoneInfo
+import astropy.units as u
 from bs4 import BeautifulSoup
 import datetime
 from html_table_parser.parser import HTMLTableParser
@@ -22,17 +24,17 @@ class ASASSNBroker():
     def __init__(self, name):
         self.name = name
 
-    '''
-    Opens the URL of the ASAS-SN transient table to ensure that the link functions
-    '''
     def open_webpage(self):
+        '''
+        Opens the URL of the ASAS-SN transient table to ensure that the link functions
+        '''
         page_status_code = requests.get(BROKER_URL).status_code
         return page_status_code
 
-    '''
-    Reads data from the ASAS-SN transient table into a list
-    '''
     def retrieve_transient_table(self):
+        '''
+        Reads data from the ASAS-SN transient table into a list
+        '''
         page = requests.get(BROKER_URL)
         doc = lh.fromstring(page.content)
         tr_elements = doc.xpath('//tr')
@@ -61,10 +63,10 @@ class ASASSNBroker():
                 i += 1
         return col
 
-    '''
-    Searches the transient list for microlensing candidates and appends them to a list of events
-    '''
     def retrieve_microlensing_coordinates(self):
+        '''
+        Searches the transient list for microlensing candidates and appends them to a list of events
+        '''
         transienttable = self.retrieve_transient_table()
         listofindices = []
         i = 0
@@ -86,20 +88,17 @@ class ASASSNBroker():
             listofevents.append([fullids[n], fullasassnids[n], fullralist[n], fulldeclist[n]])
         return listofevents
 
-    '''
-    Creates and saves Target objects from the list of microlensing events
-    '''
     def fetch_alerts(self):
+        '''
+        Creates and saves Target objects from the list of microlensing events
+        '''
         list_of_targets = []
         listofevents = self.retrieve_microlensing_coordinates()
         for event in listofevents[0:]:
             target_name = event[0]
-            ra_split = event[2].split(':')
-            dec_split = event[3].split(':')
-            ra = float(ra_split[0]) + (float(ra_split[1])/60) + (float(ra_split[2])/3600)
-            dec = float(dec_split[0]) + (float(dec_split[1])/60) + (float(dec_split[2])/3600)
-            coords = [ra, dec]
-            cible = SkyCoord(coords[0], coords[1], unit="deg")
+            sexagesimal_string = event[2] + " " + event[3]
+            cible = SkyCoord(sexagesimal_string, frame=ICRS, unit=(u.hourangle, u.deg))
+            print(cible)
             try:
                 target = Target.objects.get(name=target_name)
                 '''
@@ -113,20 +112,20 @@ class ASASSNBroker():
                     target.save()
             list_of_targets.append(target)
         return list_of_targets
-
-    '''
-    Reads a URL to determine whether it is valid/contains relevent data
-    '''
+ 
     def url_get_contents(self, url):
+        '''
+        Reads a URL to determine whether it is valid/contains relevent data
+        '''
         req = urllib.request.Request(url=url)
         f = urllib.request.urlopen(req)
         return f.read()
 
-    '''
-    Searches the ASAS-SN photometry database using RA and Dec of photometry candidates and a 2 arcminute radius
-    Creates and saves a ReducedDatum object of the given Target and its associated photometry data
-    '''
     def find_and_ingest_photometry(self):
+        '''
+        Searches the ASAS-SN photometry database using RA and Dec of photometry candidates and a 2 arcminute radius
+        Creates and saves a ReducedDatum object of the given Target and its associated photometry data
+        '''
         targets = self.fetch_alerts()
         i = 0
         lightcurvelinks = []
