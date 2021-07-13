@@ -98,7 +98,6 @@ class ASASSNBroker():
             target_name = event[0]
             sexagesimal_string = event[2] + " " + event[3]
             cible = SkyCoord(sexagesimal_string, frame=ICRS, unit=(u.hourangle, u.deg))
-            print(cible)
             try:
                 target = Target.objects.get(name=target_name)
                 '''
