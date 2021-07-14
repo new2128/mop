@@ -63,11 +63,11 @@ class ASASSNBroker():
                 i += 1
         return col
 
-    def retrieve_microlensing_coordinates(self):
+    def retrieve_microlensing_coordinates(self, table):
         '''
         Searches the transient list for microlensing candidates and appends them to a list of events
         '''
-        transienttable = self.retrieve_transient_table()
+        transienttable = table
         listofindices = []
         i = 0
         newlist = [str(s) for s in transienttable[11][1]]
@@ -88,12 +88,12 @@ class ASASSNBroker():
             listofevents.append([fullids[n], fullasassnids[n], fullralist[n], fulldeclist[n]])
         return listofevents
 
-    def fetch_alerts(self):
+    def fetch_alerts(self, events):
         '''
         Creates and saves Target objects from the list of microlensing events
         '''
         list_of_targets = []
-        listofevents = self.retrieve_microlensing_coordinates()
+        listofevents = events
         for event in listofevents[0:]:
             target_name = event[0]
             sexagesimal_string = event[2] + " " + event[3]
@@ -120,19 +120,19 @@ class ASASSNBroker():
         f = urllib.request.urlopen(req)
         return f.read()
 
-    def find_and_ingest_photometry(self):
+    def find_and_ingest_photometry(self, events, targets):
         '''
         Searches the ASAS-SN photometry database using RA and Dec of photometry candidates and a 2 arcminute radius
         Creates and saves a ReducedDatum object of the given Target and its associated photometry data
         '''
-        targets = self.fetch_alerts()
+        targets = targets
         i = 0
         lightcurvelinks = []
         lightcurvepartlinks = []
         indices_with_photometry_data = []
         rd_list = []
 
-        events = self.retrieve_microlensing_coordinates()
+        events = events
         while(i < len(events)):
             samplera = self.retrieve_microlensing_coordinates()[i][2]
             sampledec = self.retrieve_microlensing_coordinates()[i][3]
