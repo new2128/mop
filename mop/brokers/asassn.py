@@ -37,31 +37,31 @@ class ASASSNBroker():
         '''
         page = requests.get(BROKER_URL)
         doc = lh.fromstring(page.content)
-        tr_elements = doc.xpath('//tr')
-        col = []
+        table_elements = doc.xpath('//tr')
+        table_list = []
         i = 0
-        for t in tr_elements[0]:
+        for t in table_elements[0]:
             i += 1
             content = t.text_content()
-            col.append((content, []))
-        for j in range(1, len(tr_elements)):
-            T = tr_elements[j]
+            table_list.append((content, []))
+        for j in range(1, len(table_elements)):
+            table_row = table_elements[j]
             '''
             If row is not of size 12, the data is not from the right table
             '''
-            if len(T) != 12:
+            if len(table_row) != 12:
                 break
             i = 0
-            for t in T.iterchildren():
+            for t in table_row.iterchildren():
                 data = t.text_content()
                 if i > 0:
                     try:
                         data = int(data)
                     except:
                         pass
-                col[i][1].append(data)
+                table_list[i][1].append(data)
                 i += 1
-        return col
+        return table_list
 
     def retrieve_microlensing_coordinates(self, table):
         '''
