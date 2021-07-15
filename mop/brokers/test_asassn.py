@@ -53,14 +53,16 @@ class TestActivity(unittest.TestCase):
             '''
             The length should be 2, given the fake data
             '''
-            actual_result = broker.retrieve_microlensing_coordinates()
+            actual_result = broker.retrieve_microlensing_coordinates(fakedata)
             assert (len(actual_result) == 2)
 
     def test_fetch_alerts(self):
         '''
         Tests that fetch_alerts() returns an object of type Target
         '''
-        targetlist = broker.fetch_alerts()
+        table = broker.retrieve_transient_table()
+        events = broker.retrieve_microlensing_coordinates(table)
+        targetlist = broker.fetch_alerts(events)
         targettype = type(targetlist[0])
         self.assertTrue(targettype == Target)
 
@@ -68,6 +70,9 @@ class TestActivity(unittest.TestCase):
         '''
         Tests that find_and_ingest_photometry() returns at least one ReducedDatum object
         '''
-        rd_list = broker.find_and_ingest_photometry()
+        table = broker.retrieve_transient_table()
+        events = broker.retrieve_microlensing_coordinates(table)
+        targetlist = broker.fetch_alerts(events)
+        rd_list = broker.find_and_ingest_photometry(events, targetlist)
         objecttype = type(rd_list[0])
         assert (objecttype == ReducedDatum)
