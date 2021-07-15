@@ -58,6 +58,12 @@ harvestmoa:
   enabled: true
   schedule: "0 12 * * *"
   resources: {}
+  
+# CronJob: Harvest ASAS-SN
+harvestasassn:
+  enabled: true
+  schedule: "0 12 * * *"
+  resources: {}
 
 # CronJob: Add Galactic Coordinates
 addgalacticcoordinates:
