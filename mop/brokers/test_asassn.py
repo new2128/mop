@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 
-from mytom.asassn import ASASSNBroker
+from mop.asassn import ASASSNBroker
 from tom_dataproducts.models import ReducedDatum
 from tom_targets.models import Target
 
