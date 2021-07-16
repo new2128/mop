@@ -134,8 +134,8 @@ class ASASSNBroker():
 
         events = events
         while(i < len(events)):
-            samplera = self.retrieve_microlensing_coordinates()[i][2]
-            sampledec = self.retrieve_microlensing_coordinates()[i][3]
+            samplera = events[i][2]
+            sampledec = events[i][3]
             sampleralist = samplera.split(':')
             sampledeclist = sampledec.split(':')
             photometryurl = os.path.join("https://asas-sn.osu.edu/photometry?utf8=%E2%9C%93&ra="
