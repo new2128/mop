@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from mytom.asassn import ASASSNBroker
+from mop.asassn import ASASSNBroker
 
 BROKER_URL = 'http://www.astronomy.ohio-state.edu/asassn/transients.html'
 photometry = 'https://asas-sn.osu.edu/photometry'
