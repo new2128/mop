@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 
-from mop.asassn import ASASSNBroker
+from mop.brokers import asassn 
 from tom_dataproducts.models import ReducedDatum
 from tom_targets.models import Target
 
@@ -18,7 +18,7 @@ fakedata = [['id', ['', '']], ['other', ['AT2021kdo (= Gaia21bxn)',
 
 class TestActivity(unittest.TestCase):
     def SetUp(self, broker):
-        self.broker = ASASSNBroker('ASAS-SN Broker')
+        self.broker = asassn.ASASSNBroker('ASAS-SN Broker')
 
     def test_open_webpage(self):
         '''
