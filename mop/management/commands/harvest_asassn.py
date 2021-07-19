@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         pass
 
-    def handle(self):
+    def handle(self, *args, **options):
         Asassn = asassn.ASASSNBroker()
         table = Asassn.retrieve_transient_table()
         list_of_events = Asassn.retrieve_microlensing_coordinates(table)
