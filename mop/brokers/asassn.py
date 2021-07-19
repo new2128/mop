@@ -4,7 +4,7 @@ from astropy.time import Time, TimezoneInfo
 import astropy.units as u
 from bs4 import BeautifulSoup
 import datetime
-from html_table_parser.parser import HTMLTableParser
+from html.parser import HTMLParser
 import lxml.html as lh
 import os
 import pandas as pd
