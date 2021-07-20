@@ -176,6 +176,7 @@ class ASASSNBroker():
                 functional_link = os.path.join(link+"?page=" + str(i))
                 table = []
                 try:
+
                     page = requests.get(functional_link)
                     doc = lh.fromstring(page.content)
                     tr_elements = doc.xpath('//tr')

@@ -15,6 +15,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         Asassn = asassn.ASASSNBroker('ASAS-SN Broker)
+        Asassn = asassn.ASASSNBroker('ASAS-SN Broker')
         table = Asassn.retrieve_transient_table()
         list_of_events = Asassn.retrieve_microlensing_coordinates(table)
         list_of_targets = Asassn.fetch_alerts(list_of_events)

@@ -1,6 +1,5 @@
 import unittest
 from unittest import mock
-
 from mop.brokers import asassn
 from tom_dataproducts.models import ReducedDatum
 from tom_targets.models import Target
